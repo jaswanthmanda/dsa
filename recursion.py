@@ -82,6 +82,53 @@ class SortArrayUsingRecursion:
             arr = self.insert_into_array(arr, item)
         return arr
 
+class SortAStack:
+
+    def __init__(self) -> None:
+        """Initializer"""
+        pass
+
+    def insert_into_stack(self, stack: list, item: int) -> list:
+        """Inserts a item into stack and returns stack"""
+        if len(stack) == 0:
+            stack.append(item)
+            return stack
+        if len(stack) == 1:
+            if stack[-1] < item:
+                new_item = stack.pop()
+                stack.append(item)
+                stack.append(new_item)
+            else:
+                stack.append(item)
+            return stack
+
+        if stack[-1] < item:
+            new_item = stack.pop()
+            self.insert_into_stack(stack, item)
+            stack.append(new_item)
+        else:
+            stack.append(item)
+
+        return stack
+
+    def sort_a_stack(self, stack: list):
+        """Sorts a given stack"""
+        # base case
+        if len(stack) in (0, 1):
+            return stack
+
+        # base logic
+        new_item = stack.pop()
+        stack = self.sort_a_stack(stack)
+
+        if stack[-1] < new_item:
+            stack = self.insert_into_stack(stack, new_item)
+        else:
+            stack.append(new_item)
+
+        return stack
+
+
 
 # function calls
 # print(factorial(5))
@@ -90,8 +137,12 @@ class SortArrayUsingRecursion:
 # print_n_to_1(25)
 # print(sum_of_numbers(25))
 # print(recursive_palindrome("abbbba"))
-new_obj = SortArrayUsingRecursion()
-print(new_obj.sort_an_array_recu([2, 1, 4, 3, 5, 6]))
-print(new_obj.sort_an_array_recu([2]))
-print(new_obj.sort_an_array_recu([1]))
-print(new_obj.sort_an_array_recu([1, 2, 3, 4, 5, 6, 7]))
+# new_obj = SortArrayUsingRecursion()
+# print(new_obj.sort_an_array_recu([2, 7, 1, 4, 3, 5, 6]))
+# print(new_obj.sort_an_array_recu([2]))
+# print(new_obj.sort_an_array_recu([1]))
+# print(new_obj.sort_an_array_recu([1, 2, 3, 4, 5, 6, 7]))
+new_obj = SortAStack()
+print(new_obj.sort_a_stack([5, 1, 0, 2]))
+print(new_obj.sort_a_stack([2, 3, 1]))
+print(new_obj.sort_a_stack([3, 2, 1]))
