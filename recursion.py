@@ -128,6 +128,33 @@ class SortAStack:
 
         return stack
 
+class gFseries:
+    def gfSeries_suporter(self, count: int, arr: list) -> None:
+        # code here
+        if count <= 1:
+            return arr
+        elif len(arr) > count:
+            return arr
+
+        # base logic
+        if count-1 >= len(arr) or count-2 >= len(arr):
+            self.gfSeries_suporter(count-1, arr)
+        temp = ((arr[count-2])**2) - (arr[count-1])
+        arr.append(temp)
+        return self.gfSeries_suporter(count-1, arr)
+
+    def gfSeries(self, n:int) -> None:
+
+        if n == 2:
+            print(0, 1, end = " ")
+        else:
+            ans = [0, 1]
+
+            ans = self.gfSeries_suporter(n-1, ans)
+            print(*ans)
+
+
+
 
 
 # function calls
@@ -142,7 +169,9 @@ class SortAStack:
 # print(new_obj.sort_an_array_recu([2]))
 # print(new_obj.sort_an_array_recu([1]))
 # print(new_obj.sort_an_array_recu([1, 2, 3, 4, 5, 6, 7]))
-new_obj = SortAStack()
-print(new_obj.sort_a_stack([5, 1, 0, 2]))
-print(new_obj.sort_a_stack([2, 3, 1]))
-print(new_obj.sort_a_stack([3, 2, 1]))
+# new_obj = SortAStack()
+# print(new_obj.sort_a_stack([5, 1, 0, 2]))
+# print(new_obj.sort_a_stack([2, 3, 1]))
+# print(new_obj.sort_a_stack([3, 2, 1]))
+new_obj = gFseries()
+print(new_obj.gfSeries(13))
