@@ -128,7 +128,9 @@ class SortAStack:
 
         return stack
 
+
 class gFseries:
+    """Gfseries"""
     def gfSeries_suporter(self, count: int, arr: list) -> None:
         # code here
         if count <= 1:
@@ -153,6 +155,23 @@ class gFseries:
             ans = self.gfSeries_suporter(n-1, ans)
             print(*ans)
 
+class Recamanseries:
+    """Recman series correct logic wise (need to do using loop to pass test cases)"""
+    def helper(self, ans: list, n: int):
+        if n <= 1:
+            return ans
+        self.helper(ans, n-1)
+        item = ans[-1] - n
+        if item > 0 and item not in ans:
+            ans.append(item)
+        else:
+            ans.append(ans[-1] + n)
+        return ans
+
+    def recamanSequence(self, n):
+        ans = [0]
+        self.helper(ans, n)
+        return ans
 
 
 
