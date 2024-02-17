@@ -173,6 +173,33 @@ class Recamanseries:
         self.helper(ans, n)
         return ans
 
+class Solution:
+    def helper(self, ans: list, n: int, sup: str):
+        """Helps main function"""
+        if n == ans[0] and sup == "inc":
+            return ans
+        if n <= 0 or sup == "inc":
+            item = ans[-1] + 5
+            ans.append(item)
+            self.helper(ans, item, "inc")
+        else:
+            item = ans[-1] - 5
+            ans.append(item)
+            self.helper(ans, item, "dec")
+
+        return ans
+
+    def main_fun(self, n: int):
+        # code here
+        if n < 1:
+            return [n]
+
+        # base logic
+        ans = [n]
+        new = self.helper(ans, n, "dec")
+        return new
+
+
 
 
 
