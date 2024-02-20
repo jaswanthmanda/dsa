@@ -200,6 +200,23 @@ class Solution:
         return new
 
 
+class Solution:
+    def helper(self, ans: list, n: int):
+        if n <= 1:
+            return ans
+        self.helper(ans, n-1)
+        item = ans[-1] - n
+        if item > 0 and item not in ans:
+            ans.append(item)
+        else:
+            ans.append(ans[-1] + n)
+        return ans
+
+    def recamanSequence(self, n):
+        ans = [0]
+        self.helper(ans, n)
+        return ans
+
 
 
 
@@ -219,5 +236,5 @@ class Solution:
 # print(new_obj.sort_a_stack([5, 1, 0, 2]))
 # print(new_obj.sort_a_stack([2, 3, 1]))
 # print(new_obj.sort_a_stack([3, 2, 1]))
-new_obj = gFseries()
-print(new_obj.gfSeries(13))
+# new_obj = gFseries()
+# print(new_obj.gfSeries(13))
