@@ -31,7 +31,51 @@ class BinarySearch:
             return self.search_rec(arr, x, mid + 1, high)
 
 
+class FirstOccuredElemen(BinarySearch):
+
+    def __init__(self) -> None:
+        pass
+
+    def main_fun(self, arr: list, item: int) -> int:
+        """Returns first occurence of the given item"""
+
+        low = 0
+        high = len(arr) - 1
+        while low <= high:
+            mid = (low + high)//2
+            if item < arr[mid]:
+                high = mid - 1
+            elif item > arr[mid]:
+                low = mid + 1
+            else:
+                if mid == 0 or arr[mid - 1] != arr[mid]:
+                    return mid
+                else:
+                    high = mid - 1
+        return -1
+
+class LastOccuredElemen(FirstOccuredElemen):
+
+    def __init__(self) -> None:
+        pass
+
+    def main_fun(self, arr: list, item: int) -> int:
+        """Return last occured element in the arr"""
+        low = 0
+        high = len(arr) - 1
+        while low<=high:
+            mid = (low + high)//2
+            if item < arr[mid]:
+                high = mid - 1
+            elif item > arr[mid]:
+                low = mid + 1
+            else:
+                if mid == len(arr) - 1 or arr[mid+1] != arr[mid]:
+                    return mid
+                else:
+                    low = mid + 1
+
 # function calls
-cls_obj = BinarySearch()
+cls_obj = LastOccuredElemen()
 # print(cls_obj.search_iter([1, 2, 3, 4, 5, 6], 8))
-print(cls_obj.search_rec([1, 2, 3, 4, 5, 6], 5, 0, 5))
+print(cls_obj.main_fun([1, 2, 3, 4, 4, 5, 6], 4))
