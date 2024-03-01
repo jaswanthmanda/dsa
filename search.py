@@ -36,7 +36,7 @@ class FirstOccuredElemen(BinarySearch):
     def __init__(self) -> None:
         pass
 
-    def main_fun(self, arr: list, item: int) -> int:
+    def main_fun_fir(self, arr: list, item: int) -> int:
         """Returns first occurence of the given item"""
 
         low = 0
@@ -59,7 +59,7 @@ class LastOccuredElemen(FirstOccuredElemen):
     def __init__(self) -> None:
         pass
 
-    def main_fun(self, arr: list, item: int) -> int:
+    def main_fun_las(self, arr: list, item: int) -> int:
         """Return last occured element in the arr"""
         low = 0
         high = len(arr) - 1
@@ -75,7 +75,21 @@ class LastOccuredElemen(FirstOccuredElemen):
                 else:
                     low = mid + 1
 
+class CountNumberofOccured(LastOccuredElemen):
+
+    def __init__(self):
+        pass
+
+    def count_occ_bin_search(self, arr: list, item: int):
+        """Return number of occurences"""
+        first = self.main_fun_fir(arr, item)
+
+        if first == -1:
+            return 0
+
+        return self.main_fun_las(arr, item) - first + 1
+
 # function calls
-cls_obj = LastOccuredElemen()
+cls_obj = CountNumberofOccured()
 # print(cls_obj.search_iter([1, 2, 3, 4, 5, 6], 8))
-print(cls_obj.main_fun([1, 2, 3, 4, 4, 5, 6], 4))
+print(cls_obj.count_occ_bin_search([1, 2, 3, 4, 40, 40, 40, 50, 60], 40))
