@@ -81,11 +81,40 @@ def bubble_sort(arr):
     return arr
 
 
-def selection_sort(arr):
-    # Your code here
-    pass
+def selection_sort(arr: list[int]) -> None:
+    # Write your code here
+    """
+    (4) ([3] 2 1 5)
+    {1} (3) ([2] 4 5)
+    {1 2 3 4 5}
+    """
+    # logic: swap if prev is greater than curr
+    N = len(arr)
+
+    for i in range(N):
+        min_ind = i
+
+        for j in range(i, N):
+            if arr[j] < arr[min_ind]:
+                min_ind = j
+
+        arr[i], arr[min_ind] = arr[min_ind], arr[i]
+
+
+    return arr
+
+def insertion_sort(arr: list[int]) -> None:
+    """
+    Sorts the array from first
+    Iterates through each item in the array and inserts in the position
+    in the order.
+    """
+
+    # return result
+    return arr
 
 # Test cases
+print("Selection Sort!")
 print(selection_sort([5, 3, 8, 1, 2]))  # Output: [1, 2, 3, 5, 8]
 print(selection_sort([9, 0, 6, 3, 2]))  # Output: [0, 2, 3, 6, 9]
 print(selection_sort([1, 2, 3, 4, 5]))  # Output: [1, 2, 3, 4, 5]
@@ -100,9 +129,27 @@ print(selection_sort([5, 1, 2, 3, 4])) # Output: [1, 2, 3, 4, 5]
 
 
 # Test cases
+print("Bubble Sort!")
 print(bubble_sort([5, 3, 8, 1, 2]))  # Output: [1, 2, 3, 5, 8]
 print(bubble_sort([9, 0, 6, 3, 2]))  # Output: [0, 2, 3, 6, 9]
 print(bubble_sort([1, 2, 3, 4, 5]))  # Output: [1, 2, 3, 4, 5]
 print(bubble_sort([]))  # Output: []
 print(bubble_sort([1]))  # Output: [1]
 print(bubble_sort([5, 5, 5]))  # Output: [5, 5, 5]
+
+# Test cases
+print("Insertion Sort!")
+arr = [3, 1, 4, 2]
+print(insertion_sort(arr))  # Expected output: [1, 2, 3, 4]
+arr = [1, 2, 3, 4]
+print(insertion_sort(arr))  # Expected output: [1, 2, 3, 4]
+arr = [4, 3, 2, 1]
+print(insertion_sort(arr))  # Expected output: [1, 2, 3, 4]
+arr = [3, 1, 4, 2, 2, 1]
+print(insertion_sort(arr))  # Expected output: [1, 1, 2, 2, 3, 4]
+arr = []
+print(insertion_sort(arr))  # Expected output: []
+arr = [1]
+print(insertion_sort(arr))  # Expected output: [1]
+arr = [i for i in range(100, 0, -1)]  # List containing numbers from 100 to 1 in reverse order
+print(insertion_sort(arr))  # Expected output: [1, 2, 3, ..., 100]
