@@ -28,5 +28,4 @@ while j < len(arr):
         i += 1
         j += 1
 
-
 print(mx_)
