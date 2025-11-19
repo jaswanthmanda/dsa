@@ -27,11 +27,13 @@ class Solution:
             q = deque([(r, c)])
             visited.add((r, c))
             count = 0
+            touches_border = False
 
             while q:
                 a, b = q.popleft()
                 if a in [0, m - 1] or b in [0, n - 1]:
-                    return (0, False)
+                    # return (0, False)
+                    touches_border = True
                 count += 1
 
                 vals = [(a - 1, b), (a + 1, b), (a, b - 1), (a, b + 1)]
@@ -39,27 +41,34 @@ class Solution:
                 for val in vals:
                     c = val[0]
                     d = val[1]
-                    if 0 <= c < m and 0 <= d < n and grid[c][d] == 1 and (c, d) not in visited:
+                    if (
+                        0 <= c < m
+                        and 0 <= d < n
+                        and grid[c][d] == 1
+                        and (c, d) not in visited
+                    ):
                         visited.add((c, d))
                         q.append((c, d))
 
-            return (count, True)
+            return (count, not touches_border)
 
         counter = 0
+        largeCount = 0
         for i in range(m):
             for j in range(n):
                 if (
                     grid[i][j] == 1
-                    and i not in [0, m - 1]
-                    and j not in [0, n - 1]
+                    # and i not in [0, m - 1]
+                    # and j not in [0, n - 1]
                     and (i, j) not in visited
                 ):
                     count_temp, cause = bfs(i, j)
                     # print(count_temp, cause)
                     if cause:
                         counter = count_temp
+                        largeCount += counter
 
-        return counter
+        return largeCount
 
 
 s = Solution()
