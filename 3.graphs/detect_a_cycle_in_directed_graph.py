@@ -23,5 +23,55 @@ Constraints:
 
 
 class Solution:
+    def dfs(self, start, adj):
+        self.visited.add(start)
+        self.pathVisited.add(start)
+
+        for nei in adj[start]:
+            if nei not in self.visited:
+                if self.dfs(nei, adj):
+                    return True
+            elif nei in self.visited and nei in self.pathVisited:
+                return True
+
+        self.pathVisited.remove(start)
+        return False
+
     def isCyclic(self, N, adj):
-        
+        self.visited = set()
+        self.pathVisited = set()
+
+        for i in range(N):
+            if i not in self.visited:
+                if self.dfs(i, adj):
+                    return True
+
+        return False
+
+
+s = Solution()
+
+k1 = s.isCyclic(
+    6,
+    [
+        [1],
+        [2, 5],
+        [3],
+        [4],
+        [1],
+        [],
+    ],
+)
+
+k2 = s.isCyclic(
+    4,
+    [
+        [1, 2],
+        [2],
+        [],
+        [0, 2],
+    ],
+)
+
+print(k1)
+print(k2)

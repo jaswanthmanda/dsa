@@ -37,6 +37,56 @@ Constraints:
 - 1 ≤ V ≤ 10⁴
 - 0 ≤ number of edges ≤ 10⁴
 """
+
+
 class Solution:
+    def dfs(self, start, adj):
+        self.visited.add(start)
+
+        for nei in adj[start]:
+            if nei not in self.visited:
+                self.dfs(nei, adj)
+
+        self.stack.append(start)
+
     def topoSort(self, V, adj):
-       
+        self.stack = []
+        self.visited = set()
+
+        for i in range(V):
+            if i not in self.visited:
+                self.dfs(i, adj)
+
+        ans = []
+        while self.stack:
+            ans.append(self.stack.pop())
+
+        return ans
+
+
+s = Solution()
+
+k1 = s.topoSort(
+    6,
+    [
+        [],
+        [],
+        [3],
+        [1],
+        [0, 1],
+        [0, 2],
+    ],
+)
+
+k2 = s.topoSort(
+    4,
+    [
+        [],
+        [0],
+        [0],
+        [0],
+    ],
+)
+
+print(k1)
+print(k2)
