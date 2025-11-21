@@ -20,5 +20,8 @@ Constraints:
 - E=number of edges
 - 1 ≤ V, E ≤ 104
 """
+
+
 class Solution:
     def isCyclic(self, N, adj):
+        

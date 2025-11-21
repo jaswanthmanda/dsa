@@ -1,3 +1,5 @@
+from collections import deque
+
 # Bipartite graph
 """
 Given an undirected graph with V vertices labeled from 0 to V-1.
@@ -21,5 +23,63 @@ Constraints:
 - 1 ≤ V, E ≤ 104
 """
 
+
 class Solution:
+    def bfs(self, start, adj):
+        q = deque([start])
+
+        # start with 0
+        self.k[start] = 0
+
+        while q:
+            node = q.popleft()
+
+            for nei in adj[node]:
+                if self.k[nei] == -1:
+                    if self.k[node] == 0:
+                        self.k[nei] = 1
+                    else:
+                        self.k[nei] = 0
+                    q.append(nei)
+                elif self.k[node] == self.k[nei]:
+                    return False
+
+        return True
+
     def isBipartite(self, V, adj):
+        self.k = [-1 for _ in range(V)]
+
+        for i in range(V):
+            if self.k[i] == -1:
+                kk = self.bfs(
+                    i,
+                    adj,
+                )
+                if not kk:
+                    return kk
+
+
+s = Solution()
+
+k1 = s.isBipartite(
+    4,
+    [
+        [1, 3],
+        [0, 2],
+        [1, 3],
+        [0, 2],
+    ],
+)
+
+k2 = s.isBipartite(
+    4,
+    [
+        [1, 2, 3],
+        [0, 2],
+        [0, 1, 3],
+        [0, 2],
+    ],
+)
+
+print(k1)
+print(k2)
