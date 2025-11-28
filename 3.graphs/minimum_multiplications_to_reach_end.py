@@ -1,3 +1,5 @@
+from collections import deque
+
 # Minimum multiplications to reach end
 """
 Given start, end, and an array arr of n numbers.
@@ -35,3 +37,32 @@ Constraints:
 
 class Solution:
     def minimumMultiplications(self, arr, start, end):
+        MOD = 100000
+        dist = [-1] * MOD
+        dist[start] = 0
+
+        q = deque([start])
+
+        while q:
+            node = q.popleft()
+
+            if node == end:
+                return dist[node]
+
+            for i in arr:
+                newNode = (node * i) % MOD
+                if dist[newNode] == -1:
+                    dist[newNode] = dist[node] + 1
+                    q.append(newNode)
+
+        return -1
+
+
+s = Solution()
+
+k1 = s.minimumMultiplications([2, 5, 7], 3, 30)
+
+k2 = s.minimumMultiplications([3, 4, 65], 7, 66175)
+
+print(k1)
+print(k2)

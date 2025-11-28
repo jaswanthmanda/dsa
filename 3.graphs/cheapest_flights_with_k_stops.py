@@ -1,6 +1,5 @@
-import heapq
-
 from typing import List
+from collections import deque
 
 
 # Cheapest flight within K stops
@@ -51,35 +50,35 @@ class Solution:
     def CheapestFlight(
         self, n: int, flights: List[List[int]], src: int, dst: int, K: int
     ) -> int:
+        if src == dst:
+            return 0
+
         # build adj matrix
         adj = {i: [] for i in range(n)}
 
         for a, b, c in flights:
             adj[a].append((b, c))
 
-        pricePoint = [[float("inf")] * (K + 2) for _ in range(n)]
+        dist = [float('inf') for _ in range(n)]
 
-        pq = [(0, src, -1)]
+        # (stops, node, price)
+        q = deque([(0, src, 0)])
 
-        while pq:
-            price, node, stopC = heapq.heappop(pq)
-            if stopC > K:
+        while q:
+            stops, node, price = q.popleft()
+
+            if stops > K:
                 continue
 
-            if node == dst:
-                if pricePoint[node][stopC+1] > price and stopC <= K:
-                    pricePoint[node][stopC+1] = price
+            if dist[dst] < price:
                 continue
 
-            for nei, price_nei in adj[node]:
-                if pricePoint[nei][stopC + 1] > price + price_nei:
-                    # print(nei, price_nei, stopC)
-                    pricePoint[nei][stopC + 1] = price_nei + price
-                    heapq.heappush(pq, (price + price_nei, nei, stopC + 1))
+            for nei, nei_price in adj[node]:
+                if dist[nei] > price + nei_price:
+                    dist[nei] = price + nei_price
+                    q.append((stops + 1, nei, price + nei_price))
 
-        best = min(pricePoint[dst][:K+1])
-        return best if best != float('inf') else -1
-
+        return dist[dst] if dist[dst] != float('inf') else -1
 
 s = Solution()
 
