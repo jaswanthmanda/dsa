@@ -66,32 +66,33 @@ Constraints:
 - accounts[i][0] consists of English letters.
 """
 
+
 class DisjointSet:
     def __init__(self, V):
         self.nodes = [i for i in range(V)]
         self.parent = [i for i in range(V)]
         self.sizes = [1 for _ in range(V)]
-        
+
     def findUPar(self, node):
         if node == self.parent[node]:
             return node
 
         self.parent[node] = self.findUPar(self.parent[node])
-        
+
         return self.parent[node]
-    
+
     def unionBySize(self, u, v):
         ulp_u = self.findUPar(u)
         ulp_v = self.findUPar(v)
         if ulp_u == ulp_v:
             return
-        
+
         if self.sizes[ulp_u] < self.sizes[ulp_v]:
             self.parent[ulp_u] = ulp_v
             self.sizes[ulp_v] += self.sizes[ulp_u]
         else:
             self.parent[ulp_v] = ulp_u
-            self.sizes[ulp_u] += self.sizes[ulp_v] 
+            self.sizes[ulp_u] += self.sizes[ulp_v]
 
 
 class Solution:
