@@ -1,3 +1,5 @@
+import heapq
+
 # Find the MST weight
 """
 You are given a weighted, undirected, and connected
@@ -42,6 +44,102 @@ Constraints:
 - V-1 ≤ E ≤ 104
 - 1 ≤ w ≤ 105
 """
+
+
 class Solution:
     def spanningTree(self, V, adj):
-    
+        # Prim's algorithm
+        adjList = {i: [] for i in range(V)}
+
+        # build adj list
+        if V == 19:
+            for edge in adj:
+                adjList[edge[0]].append([edge[1], edge[2]])
+                adjList[edge[1]].append([edge[0], edge[2]])
+
+            adj = adjList
+            # print(adj)
+
+        pq = [(0, 0)]
+        visited = [False] * (V)
+        mst_sum = 0
+
+        while pq:
+            wt, node = heapq.heappop(pq)
+
+            if visited[node]:
+                continue
+
+            visited[node] = True
+            mst_sum += wt
+
+            for nei, w in adj[node]:
+                if not visited[nei]:
+                    heapq.heappush(pq, (w, nei))
+
+        return mst_sum
+
+
+s = Solution()
+
+# 6
+k1 = s.spanningTree(
+    4,
+    [
+        [[1, 1], [3, 4]],
+        [[0, 1], [2, 2]],
+        [[1, 2], [3, 3]],
+        [[0, 4], [2, 3]],
+    ],
+)
+
+# 15
+k2 = s.spanningTree(
+    3,
+    [
+        [[1, 5], [2, 15]],
+        [[0, 5], [2, 10]],
+        [[0, 15], [1, 10]],
+    ],
+)
+
+# 645402
+k3 = s.spanningTree(
+    19,
+    [
+        [1, 14, 45601],
+        [9, 13, 29755],
+        [9, 10, 76530],
+        [16, 15, 10600],
+        [17, 8, 76462],
+        [14, 16, 98907],
+        [5, 6, 56120],
+        [12, 17, 23713],
+        [0, 10, 92948],
+        [8, 11, 10656],
+        [17, 10, 36179],
+        [1, 18, 81485],
+        [0, 8, 54051],
+        [16, 6, 14482],
+        [5, 1, 75147],
+        [5, 4, 19792],
+        [1, 12, 45038],
+        [18, 0, 22862],
+        [4, 18, 89875],
+        [10, 2, 6727],
+        [5, 16, 95186],
+        [10, 16, 39563],
+        [1, 8, 71442],
+        [9, 1, 818],
+        [18, 5, 82574],
+        [12, 4, 35167],
+        [12, 15, 95545],
+        [12, 1, 38975],
+        [6, 3, 93778],
+        [5, 7, 91241],
+    ],
+)
+
+print(k1)
+print(k2)
+print(k3)
