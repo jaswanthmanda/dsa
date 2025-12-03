@@ -60,21 +60,57 @@ class Disjoinset:
 
 class Solution:
     def maxRemove(self, stones, n):
-        grid = [[0] * n for i in range(n)]
+        maxRow = 0
+        maxCol = 0
 
-        ds = Disjoinset(n * n)
+        for stone_info in stones:
+            maxRow = max(stone_info[0], maxRow)
+            maxCol = max(stone_info[1], maxCol)
 
-        for row, col in stones:
-            grid[row][col] = 1
+        ds = Disjoinset(maxRow + maxCol + 2)
+        map = {}
+        for stone in stones:
+            nodeRow = stone[0]
+            nodeCol = stone[1] + maxRow + 1
+            # print(nodeRow, maxRow, nodeCol, maxCol)
+            ds.unionBySize(nodeRow, nodeCol)
+            map[nodeRow] = 1
+            map[nodeCol] = 1
 
-        for row in range(n):
-            for col in range(n):
-                if grid[row][col] == 0:
-                    continue
+        cnt = 0
+        for item in map.keys():
+            # print(item)
+            if ds.findUPar(item) == item:
+                cnt += 1
+
+        return n - cnt
 
 
-                for a in range(0, )
-                if 0 <= a < n and 0 <= b < n and grid[a][b] == 1:
-                        nodeNo = row * n + col
-                        adjNodeNo = a * n + b
-                        ds.unionBySize(nodeNo, adjNodeNo)
+s = Solution()
+
+k1 = s.maxRemove(
+    [
+        [0, 0],
+        [0, 1],
+        [1, 0],
+        [1, 2],
+        [2, 1],
+        [2, 2],
+    ],
+    6,
+)
+
+k2 = s.maxRemove(
+    [
+        [0, 0],
+        [0, 2],
+        [1, 3],
+        [3, 1],
+        [3, 2],
+        [4, 3],
+    ],
+    6,
+)
+
+print(k1)
+print(k2)
