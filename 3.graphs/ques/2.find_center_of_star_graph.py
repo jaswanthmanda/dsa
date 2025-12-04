@@ -1,7 +1,7 @@
 # Find Center of Star Graph
 """
 There is an undirected star graph consisting of n nodes labeled from 1 to n.
-A star graph is a graph where there is one center node and exactly n - 1 edges
+A star graph is a graph where there is one center node and exactly x edges
 that connect the center node with every other node.
 
 You are given a 2D integer array edges where each
@@ -36,3 +36,33 @@ class Solution(object):
         :type edges: List[List[int]]
         :rtype: int
         """
+        a, b = edges[0][0], edges[0][1]
+        c, d = edges[1][0], edges[1][1]
+
+        if a == c or a == d:
+            return a
+
+        return b
+
+
+s = Solution()
+
+k1 = s.findCenter(
+    [
+        [1, 2],
+        [2, 3],
+        [4, 2],
+    ]
+)
+
+k2 = s.findCenter(
+    [
+        [1, 2],
+        [5, 1],
+        [1, 3],
+        [1, 4],
+    ]
+)
+
+print(k1)
+print(k2)

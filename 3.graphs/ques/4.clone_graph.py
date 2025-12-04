@@ -1,3 +1,5 @@
+from collections import deque
+
 # Clone Graph
 """
 Given a reference of a node in a connected undirected graph.
@@ -58,9 +60,57 @@ class Node(object):
 """
 
 
+class Node:
+    def __init__(self, val=0, neighbors=None):
+        self.val = val
+        self.neighbors = neighbors if neighbors is not None else []
+
+
 class Solution(object):
+    def bfs(self, node):
+        newNode = Node(1)
+        self.pp = {1: newNode}
+        vis = set([1])
+        q = deque([node])
+
+        while q:
+            nodeq = q.popleft()
+            print(self.pp)
+
+            for nei_node in nodeq.neighbors:
+                if nei_node.val not in self.pp:
+                    temp_node = Node(nei_node.val)
+                    self.pp[nei_node.val] = temp_node
+
+                if nei_node.val not in vis:
+                    # vis.add(temp_node.val)
+                    vis.add(nei_node.val)
+                    q.append(nei_node)
+
+                self.pp[nodeq.val].neighbors.append(self.pp[nei_node.val])
+
+        return newNode
+
     def cloneGraph(self, node):
         """
         :type node: Node
         :rtype: Node
         """
+        if node is None:
+            return None
+
+        return self.bfs(node)
+
+
+s = Solution()
+
+k1 = s.cloneGraph(
+    [
+        [2, 4],
+        [1, 3],
+        [2, 4],
+        [1, 3],
+    ]
+)
+
+k2 = s.cloneGraph([[]])

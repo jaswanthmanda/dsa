@@ -1,3 +1,5 @@
+from collections import deque
+
 # Find if path exists in graph
 """
 There is a bi-directional graph with n vertices, where each vertex is labeled from 0 to n - 1 (inclusive).
@@ -39,6 +41,22 @@ Constraints:
 
 
 class Solution(object):
+    def bfs(self, start, adj, dest):
+        q = deque([start])
+        vis = set([start])
+
+        while q:
+            node = q.popleft()
+
+            for nei in adj[node]:
+                if nei == dest:
+                    return True
+                if nei not in vis:
+                    vis.add(nei)
+                    q.append(nei)
+
+        return False
+
     def validPath(self, n, edges, source, destination):
         """
         :type n: int
@@ -47,3 +65,47 @@ class Solution(object):
         :type destination: int
         :rtype: bool
         """
+        if len(edges) == 0:
+            return False
+
+        if source == destination:
+            return False
+
+        # build adj matrix
+        adj = {i: [] for i in range(n)}
+
+        for edge in edges:
+            adj[edge[0]].append(edge[1])
+            adj[edge[1]].append(edge[0])
+
+        return self.bfs(source, adj, destination)
+
+
+s = Solution()
+
+k1 = s.validPath(
+    3,
+    [
+        [0, 1],
+        [1, 2],
+        [2, 0],
+    ],
+    0,
+    2,
+)
+
+k2 = s.validPath(
+    6,
+    [
+        [0, 1],
+        [0, 2],
+        [3, 5],
+        [5, 4],
+        [4, 3],
+    ],
+    0,
+    5,
+)
+
+print(k1)
+print(k2)

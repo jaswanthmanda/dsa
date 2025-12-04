@@ -42,3 +42,58 @@ class Solution(object):
         :type prerequisites: List[List[int]]
         :rtype: bool
         """
+        # build adj list
+        adjList = {i: [] for i in range(numCourses)}
+
+        for edge in prerequisites:
+            adjList[edge[0]].append(edge[1])
+
+        visiting = set()
+        visited = set()
+
+        def dfs(start, adj):
+            if start in visiting:
+                return False
+
+            if start in visited:
+                return True
+
+            visiting.add(start)
+
+            for nei in adj[start]:
+                if not dfs(nei, adj):
+                    return False
+
+            visiting.remove(start)
+            visited.add(start)
+            return True
+
+        for i in range(numCourses):
+            if not dfs(i, adjList):
+                return False
+
+        return True
+
+
+s = Solution()
+
+k1 = s.canFinish(
+    2,
+    [
+        [1, 0],
+    ],
+)
+
+k2 = s.canFinish(
+    2,
+    [
+        [1, 0],
+        [0, 1],
+    ],
+)
+
+k3 = s.canFinish(1, [])
+
+print(k1)
+print(k2)
+print(k3)
