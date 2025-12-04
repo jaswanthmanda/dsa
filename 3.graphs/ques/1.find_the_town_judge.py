@@ -39,28 +39,84 @@ Constraints:
 
 
 class Solution(object):
-    def dfs(self, start, adj):
-        item = None
-
-        for node in adj[start]:
-            if node not in self.visited:
-                self.visited.add(node)
-                item = self.dfs(node, adj)
-
-        if item is not None and self.item != -1 and item != self.item:
-            return item
-
     def findJudge(self, n, trust):
         """
         :type n: int
         :type trust: List[List[int]]
         :rtype: int
         """
-        adj = {i: [] for i in range(n)}
+        if len(trust) == 0:
+            return -1
+
+        if n < 2:
+            return 1
+
+        adj = {i: [] for i in range(1, n + 1)}
+
+        in_map = {}
+        # out_map = {}
 
         for edge in trust:
             adj[edge[0]].append(edge[1])
 
-        self.visited = set()
+            if edge[1] not in in_map:
+                in_map[edge[1]] = 1
+            else:
+                in_map[edge[1]] += 1
 
-        self.item = -1
+        for i in range(1, n + 1):
+            if i in in_map and in_map[i] == n - 1 and adj[i] == []:
+                return i
+
+        return -1
+
+
+# Optimal
+class SolutionOptimal(object):
+    def findJudge(self, n, trust):
+        if len(trust) == 0:
+            return 1 if n == 1 else -1
+
+        in_degree = [0] * (n + 1)
+        out_degree = [0] * (n + 1)
+
+        for a, b in trust:
+            out_degree[a] += 1
+            in_degree[b] += 1
+
+        for i in range(1, n + 1):
+            if in_degree[i] == n - 1 and out_degree[i] == 0:
+                return i
+
+        return -1
+
+
+s = Solution()
+
+k1 = s.findJudge(
+    2,
+    [
+        [1, 2],
+    ],
+)
+
+k2 = s.findJudge(
+    3,
+    [
+        [1, 3],
+        [2, 3],
+    ],
+)
+
+k3 = s.findJudge(
+    3,
+    [
+        [1, 3],
+        [2, 3],
+        [3, 1],
+    ],
+)
+
+print(k1)
+print(k2)
+print(k3)
