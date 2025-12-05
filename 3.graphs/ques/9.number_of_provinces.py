@@ -1,3 +1,5 @@
+from collections import deque
+
 # Number of provinces
 """
 There are n cities. Some of them are connected, while some are not.
@@ -17,6 +19,10 @@ Example 1:
 Input: isConnected = [[1,1,0],[1,1,0],[0,0,1]]
 Output: 2
 
+[[1,1,0],
+ [1,1,0],
+ [0,0,1]]
+
 Example 2:
 Input: isConnected = [[1,0,0],[0,1,0],[0,0,1]]
 Output: 3
@@ -33,8 +39,78 @@ Constraints:
 
 
 class Solution(object):
+    def bfs(self, start, adjList):
+        q = deque([start])
+        self.visited.add(start)
+
+        while q:
+            node = q.popleft()
+
+            for nei in adjList[node]:
+                if nei not in self.visited:
+                    self.visited.add(nei)
+                    q.append(nei)
+
     def findCircleNum(self, isConnected):
         """
         :type isConnected: List[List[int]]
         :rtype: int
         """
+        n = len(isConnected)
+
+        # build adjlist
+        adjList = {i: [] for i in range(n)}
+
+        for i in range(n):
+            for j in range(n):
+                if i < j and isConnected[i][j] == 1:
+                    adjList[i].append(j)
+                    adjList[j].append(i)
+
+        self.visited = set()
+        component = 0
+        for i in range(n):
+            if i not in self.visited:
+                self.bfs(i, adjList)
+                component += 1
+
+        return component
+
+
+s = Solution()
+
+k1 = s.findCircleNum(
+    [
+        [1, 1, 0],
+        [1, 1, 0],
+        [0, 0, 1],
+    ]
+)
+
+k2 = s.findCircleNum([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+
+# edge cases
+
+k3 = s.findCircleNum([[1]])
+k4 = s.findCircleNum(
+    [
+        [1, 0],
+        [0, 1],
+    ]
+)
+
+# missed case
+k5 = s.findCircleNum(
+    [
+        [1, 0, 0, 1],
+        [0, 1, 1, 0],
+        [0, 1, 1, 1],
+        [1, 0, 1, 1],
+    ]
+)
+
+print(k1)
+print(k2)
+print(k3)
+print(k4)
+print(k5)

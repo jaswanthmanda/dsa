@@ -1,3 +1,5 @@
+from collections import deque
+
 # Evaluate Division
 """
 You are given an array of variable pairs equations and an array of real numbers values,
@@ -47,6 +49,36 @@ Constraints:
 
 
 class Solution(object):
+    def bfs(self, start, dest, adjList):
+        # print(start, dest, start not in adjList or dest not in adjList)
+        if dest not in adjList or start not in adjList:
+            # print("came here 1")
+            return format(-1, ".5f")
+
+        if start == dest:
+            return format(1, ".5f")
+
+        pq = deque([(start, 1)])
+        visited = set([start])
+
+        while pq:
+            node, distNode = pq.popleft()
+
+            if node not in adjList:
+                continue
+
+            for nei, dist_nei in adjList[node]:
+                if nei not in visited:
+                    kas = distNode * dist_nei
+
+                    if nei == dest:
+                        return format(kas, ".5f")
+
+                    visited.add(nei)
+                    pq.append((nei, kas))
+
+        return format(-1, ".5f")
+
     def calcEquation(self, equations, values, queries):
         """
         :type equations: List[List[str]]
@@ -54,3 +86,81 @@ class Solution(object):
         :type queries: List[List[str]]
         :rtype: List[float]
         """
+        # build adj list
+        adjList = {}
+
+        for i, edge in enumerate(equations):
+            if edge[0] not in adjList:
+                adjList[edge[0]] = []
+            if edge[1] not in adjList:
+                adjList[edge[1]] = []
+
+            adjList[edge[0]].append((edge[1], values[i]))
+            adjList[edge[1]].append((edge[0], 1 / values[i]))
+
+        ans = [format(-1, ".5f") for _ in range(len(queries))]
+        for i, query in enumerate(queries):
+            ans[i] = self.bfs(query[0], query[1], adjList)
+            ans[i] = float(ans[i])
+
+        return ans
+
+
+s = Solution()
+
+k1 = s.calcEquation(
+    [
+        ["a", "b"],
+        ["b", "c"],
+    ],
+    [2.0, 3.0],
+    [
+        ["a", "c"],
+        ["b", "a"],
+        ["a", "e"],
+        ["a", "a"],
+        ["x", "x"],
+    ],
+)
+
+k2 = s.calcEquation(
+    [
+        ["a", "b"],
+        ["b", "c"],
+        ["bc", "cd"],
+    ],
+    [
+        1.5,
+        2.5,
+        5.0,
+    ],
+    [
+        ["a", "c"],
+        ["c", "b"],
+        ["bc", "cd"],
+        ["cd", "bc"],
+    ],
+)
+
+k3 = s.calcEquation(
+    [
+        ["a", "b"],
+    ],
+    [0.5],
+    [["a", "b"], ["b", "a"], ["a", "c"], ["x", "y"]],
+)
+
+k4 = s.calcEquation(
+    [["a", "e"], ["b", "e"]],
+    [4.0, 3.0],
+    [
+        ["a", "b"],
+        ["e", "e"],
+        ["x", "x"],
+    ],
+)
+
+print(k1)
+print(k2)
+print(k3)
+print(k4)
