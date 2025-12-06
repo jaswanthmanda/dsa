@@ -31,23 +31,20 @@ Constraints:
 """
 
 
+# O(n^2)
 class Solution(object):
     def dfs(self, start, parent, adjList):
-        self.visiting.add(start)
-
-        ans = None
-
-        for nei in adjList[start]:
-            print(parent, start, nei)
-            if nei not in self.visited and nei not in self.visiting:
-                ans = self.dfs(nei, start, adjList)
-            elif nei in self.visiting:
-                return (start, nei)
-
-        self.visiting.remove(start)
         self.visited.add(start)
 
-        return ans
+        for nei in adjList[start]:
+            if nei not in self.visited:
+                ans = self.dfs(nei, start, adjList)
+                if ans:
+                    return True
+            elif nei != parent:
+                return True
+
+        return False
 
     def findRedundantConnection(self, edges):
         """
@@ -55,29 +52,78 @@ class Solution(object):
         :rtype: List[int]
         """
         # build adj list
+        adjList = {}
+
+        def add_edge(u, v):
+            if u not in adjList:
+                adjList[u] = []
+            if v not in adjList:
+                adjList[v] = []
+
+            adjList[u].append(v)
+            adjList[v].append(u)
+
+        for items in edges:
+            u, v = items[0], items[1]
+            add_edge(u, v)
+
+            if u in adjList and v in adjList:
+                self.visited = set()
+                # print(u, v, self.dfs(u, -1, adjList))
+                if self.dfs(u, -1, adjList):
+                    return [u, v]
+
+
+class DisjointSet:
+    def __init__(self, maxNode):
+        self.nodes = [i for i in range(1, maxNode + 1)]
+        self.parent = [i for i in range(1, maxNode + 1)]
+        self.sizes = [1 for _ in range(1, maxNode + 1)]
+
+    def findUParent(self, u):
+        if u == self.parent[u - 1]:
+            return u
+
+        self.parent[u - 1] = self.findUParent(self.parent[u - 1])
+
+        return self.parent[u - 1]
+
+    def unionBySizes(self, u, v):
+        ulp_u = self.findUParent(u)
+        ulp_v = self.findUParent(v)
+
+        if ulp_u == ulp_v:
+            return None
+
+        if self.sizes[ulp_u - 1] < self.sizes[ulp_v - 1]:
+            self.parent[ulp_u - 1] = ulp_v
+            self.sizes[ulp_v - 1] += self.sizes[ulp_u - 1]
+        else:
+            self.parent[ulp_v - 1] = ulp_u
+            self.sizes[ulp_u - 1] += self.sizes[ulp_v - 1]
+
+
+# optimal O(n)
+class SolutionOptimal:
+    def findRedundantConnection(self, edges):
+        """
+        :type edges: List[List[int]]
+        :rtype: List[int]
+        """
         maxNode = 0
+        for u, v in edges:
+            maxNode = max(maxNode, u, v)
 
-        for item in edges:
-            maxNode = max(maxNode, item[0])
-            maxNode = max(maxNode, item[1])
+        ds = DisjointSet(maxNode)
 
-        adjList = {i: [] for i in range(1, maxNode + 1)}
-
-        for item in edges:
-            adjList[item[0]].append(item[1])
-            adjList[item[1]].append(item[0])
-
-        print(adjList)
-
-        self.visited = set()
-        self.visiting = set()
-
-        ans = self.dfs(1, -1, adjList)
-
-        return [ans[0], ans[1]]
+        for u, v in edges:
+            if ds.findUParent(u) == ds.findUParent(v):
+                return [u, v]
+            else:
+                ds.unionBySizes(u, v)
 
 
-s = Solution()
+s = SolutionOptimal()
 
 k1 = s.findRedundantConnection(
     [
