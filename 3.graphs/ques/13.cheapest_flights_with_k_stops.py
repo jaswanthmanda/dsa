@@ -1,3 +1,5 @@
+from collections import deque
+
 # Cheapest flights within K stops
 """
 There are n cities connected by some number of flights. You are given an array flights
@@ -45,6 +47,32 @@ Constraints:
 
 
 class Solution(object):
+    def srtDis(self, n, adjList, src, dst, k):
+        if src == dst:
+            return 0
+
+        dist = [float("inf")] * n
+        dist[src] = 0
+
+        q = deque([(0, src, 0)])
+        while q:
+            steps, node, wt = q.popleft()
+            # print(steps, node, wt)
+
+            if steps > k:
+                continue
+
+            if dist[node] > wt:
+                continue
+
+            for nei, nei_wt in adjList[node]:
+                kas = wt + nei_wt
+                if kas < dist[nei]:
+                    dist[nei] = kas
+                    q.append((steps + 1, nei, kas))
+
+        return -1 if dist[dst] == float("inf") else dist[dst]
+
     def findCheapestPrice(self, n, flights, src, dst, k):
         """
         :type n: int
@@ -54,3 +82,183 @@ class Solution(object):
         :type k: int
         :rtype: int
         """
+        # build adjlist
+        adjList = {i: [] for i in range(n)}
+        for edge in flights:
+            adjList[edge[0]].append((edge[1], edge[2]))
+
+        # print(adjList)
+
+        ans = self.srtDis(n, adjList, src, dst, k)
+
+        return ans
+
+
+s = Solution()
+
+k1 = s.findCheapestPrice(
+    4,
+    [
+        [0, 1, 100],
+        [1, 2, 100],
+        [2, 0, 100],
+        [1, 3, 600],
+        [2, 3, 200],
+    ],
+    0,
+    3,
+    1,
+)
+
+k2 = s.findCheapestPrice(
+    3,
+    [
+        [0, 1, 100],
+        [1, 2, 100],
+        [0, 2, 500],
+    ],
+    0,
+    2,
+    1,
+)
+
+k3 = s.findCheapestPrice(
+    3,
+    [
+        [0, 1, 100],
+        [1, 2, 100],
+        [0, 2, 500],
+    ],
+    0,
+    2,
+    0,
+)
+
+# 300
+k4 = s.findCheapestPrice(
+    4,
+    [
+        [0, 1, 100],
+        [1, 2, 100],
+        [2, 3, 100],
+        [0, 3, 500],
+    ],
+    0,
+    3,
+    2,
+)
+
+# 100
+k5 = s.findCheapestPrice(
+    3,
+    [
+        [0, 1, 50],
+        [1, 2, 50],
+        [0, 2, 200],
+    ],
+    0,
+    2,
+    1,
+)
+
+# 250
+k6 = s.findCheapestPrice(
+    3,
+    [
+        [0, 1, 100],
+        [1, 2, 100],
+        [0, 2, 250],
+    ],
+    0,
+    2,
+    0,
+)
+
+# 300
+k7 = s.findCheapestPrice(
+    4,
+    [
+        [0, 1, 100],
+        [1, 0, 10],
+        [1, 2, 100],
+        [2, 3, 100],
+    ],
+    0,
+    3,
+    2,
+)
+
+
+# 101
+k8 = s.findCheapestPrice(
+    4,
+    [
+        [0, 1, 1],
+        [1, 2, 1],
+        [0, 2, 100],
+        [2, 3, 1],
+    ],
+    0,
+    3,
+    1,
+)
+
+# 0
+k9 = s.findCheapestPrice(1, [], 0, 0, 5)
+
+# -1
+k10 = s.findCheapestPrice(
+    5,
+    [
+        [0, 1, 10],
+        [1, 2, 20],
+    ],
+    0,
+    4,
+    10,
+)
+
+# 40
+k11 = s.findCheapestPrice(
+    5,
+    [
+        [0, 1, 10],
+        [1, 2, 10],
+        [2, 3, 10],
+        [3, 4, 10],
+        [0, 4, 1000],
+    ],
+    0,
+    4,
+    3,
+)
+
+# 7
+k12 = s.findCheapestPrice(
+    5,
+    [
+        [0, 1, 5],
+        [1, 2, 5],
+        [0, 3, 2],
+        [3, 1, 2],
+        [1, 4, 1],
+        [4, 2, 1],
+    ],
+    0,
+    2,
+    2,
+)
+
+
+print(k1)
+print(k2)
+print(k3)
+print(k4)
+print(k5)
+print(k6)
+print(k7)
+print(k8)
+print(k9)
+print(k10)
+print(k11)
+print(k12)
