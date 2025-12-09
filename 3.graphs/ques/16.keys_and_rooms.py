@@ -1,3 +1,5 @@
+from collections import deque
+
 # Keys and Rooms
 """
 There are n rooms labeled from 0 to n - 1 and all the rooms are locked except for room 0.
@@ -41,9 +43,61 @@ Constraints:
 
 
 class Solution(object):
+    def bfs(self, start, adj):
+        q = deque([start])
+        self.vis[start] = True
+
+        while q:
+            node = q.popleft()
+
+            for nei in adj[node]:
+                if not self.vis[nei]:
+                    self.vis[nei] = True
+                    q.append(nei)
+
     def canVisitAllRooms(self, rooms):
         """
         :type rooms: List[List[int]]
         :rtype: bool
         """
-        PendingDeprecationWarning
+        n = len(rooms)
+        if n < 1:
+            return True
+
+        self.vis = [False] * n
+
+        self.bfs(0, rooms)
+
+        return False not in self.vis
+
+
+s = Solution()
+
+k1 = s.canVisitAllRooms(
+    [
+        [1],
+        [2],
+        [3],
+        [],
+    ]
+)
+
+k2 = s.canVisitAllRooms(
+    [
+        [1, 3],
+        [3, 0, 1],
+        [2],
+        [0],
+    ]
+)
+
+# edge cases
+k3 = s.canVisitAllRooms([])
+
+k4 = s.canVisitAllRooms([[0]])
+
+
+print(k1)
+print(k2)
+print(k3)
+print(k4)

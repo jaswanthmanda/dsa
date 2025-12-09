@@ -40,8 +40,84 @@ Constraints:
 
 
 class Solution(object):
+    def dfs(self, start, adj):
+        if start in self.visited:
+            return self.visited[start]
+
+        self.pathVis.add(start)
+        ans = False
+
+        if adj[start] == []:
+            self.pathVis.remove(start)
+            self.visited[start] = False
+            return False
+
+        for nei in adj[start]:
+            if nei in self.pathVis:
+                ans = True
+                break
+            if self.dfs(nei, adj):
+                ans = True
+                break
+
+        self.pathVis.remove(start)
+        self.visited[start] = ans
+        return ans
+
     def eventualSafeNodes(self, graph):
         """
         :type graph: List[List[int]]
         :rtype: List[int]
         """
+        self.visited = {}
+        self.pathVis = set()
+        n = len(graph)
+        safe = []
+
+        for i in range(n):
+            # self.pathVis.clear()
+            if not self.dfs(i, graph):
+                safe.append(i)
+
+        return safe
+
+
+s = Solution()
+
+k1 = s.eventualSafeNodes(
+    [
+        [1, 2],
+        [2, 3],
+        [5],
+        [0],
+        [5],
+        [],
+        [],
+    ]
+)
+
+k2 = s.eventualSafeNodes(
+    [
+        [1, 2, 3, 4],
+        [1, 2],
+        [3, 4],
+        [0, 4],
+        [],
+    ]
+)
+
+# test case skipped
+# expected: [0, 1,2,3,4]
+k3 = s.eventualSafeNodes(
+    [
+        [],
+        [0, 2, 3, 4],
+        [3],
+        [4],
+        [],
+    ]
+)
+
+print(k1)
+print(k2)
+print(k3)
