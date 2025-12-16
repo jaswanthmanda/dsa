@@ -44,10 +44,110 @@ Constraints:
 - No two stones are at the same coordinate point.
 """
 
+
+class DisjointSet:
+    def __init__(self, V):
+        self.nodes = [i for i in range(V)]
+        self.parent = [i for i in range(V)]
+        self.sizes = [1 for i in range(V)]
+
+    def findUPar(self, u):
+        print(u, len(self.parent))
+        if u == self.parent[u]:
+            return u
+
+        self.parent[u] = self.findUPar(self.parent[u])
+
+        return self.parent[u]
+
+    def unionBySize(self, u, v):
+        ulp_u = self.findUPar(u)
+        ulp_v = self.findUPar(v)
+
+        if ulp_u == ulp_v:
+            return
+
+        if self.sizes[ulp_u] < self.sizes[ulp_v]:
+            self.parent[ulp_u] = ulp_v
+            self.sizes[ulp_v] += self.sizes[ulp_u]
+        else:
+            self.parent[ulp_v] = ulp_u
+            self.sizes[ulp_u] += self.sizes[ulp_v]
+
+
 class Solution(object):
     def removeStones(self, stones):
         """
         :type stones: List[List[int]]
         :rtype: int
         """
-        
+        maxRow = 0
+        maxCol = 0
+        for edge in stones:
+            maxRow = max(edge[0], maxRow)
+            maxCol = max(edge[1], maxCol)
+
+        ds = DisjointSet(maxRow + maxCol + 2)
+        map = {}
+
+        for edge in stones:
+            nodeRow = edge[0]
+            nodeCol = edge[1] + maxRow + 1
+
+            ds.unionBySize(nodeRow, nodeCol)
+            map[nodeRow] = 1
+            map[nodeCol] = 1
+
+        cnt = 0
+        for item in map.keys():
+            if ds.findUPar(item) == item:
+                cnt += 1
+
+        return len(stones) - cnt
+
+
+s = Solution()
+
+k1 = s.removeStones(
+    [
+        [0, 0],
+        [0, 1],
+        [1, 0],
+        [1, 2],
+        [2, 1],
+        [2, 2],
+    ]
+)
+
+k2 = s.removeStones(
+    [
+        [0, 0],
+        [0, 2],
+        [1, 1],
+        [2, 0],
+        [2, 2],
+    ]
+)
+
+k3 = s.removeStones(
+    [
+        [0, 0],
+    ]
+)
+
+k4 = s.removeStones(
+    [
+        [3, 3],
+        [4, 4],
+        [1, 4],
+        [1, 5],
+        [2, 3],
+        [4, 3],
+        [2, 4],
+    ]
+)
+
+print(k1)
+print(k2)
+print(k3)
+print(k4)
