@@ -51,3 +51,62 @@ class Solution(object):
         :type paths: List[List[int]]
         :rtype: List[int]
         """
+        # build adj list
+        adjList = {i: [] for i in range(1, n + 1)}
+        for edge in paths:
+            u1 = edge[0]
+            u2 = edge[1]
+            adjList[u1].append(u2)
+            adjList[u2].append(u1)
+
+        ans = [0] * n
+
+        for i in range(1, n + 1):
+            used_col = set()
+
+            for nei in adjList[i]:
+                if ans[nei - 1] != 0:
+                    used_col.add(ans[nei - 1])
+
+            for j in range(1, 5):
+                if j not in used_col:
+                    ans[i - 1] = j
+                    break
+
+        return ans
+
+
+s = Solution()
+
+k1 = s.gardenNoAdj(
+    3,
+    [
+        [1, 2],
+        [2, 3],
+        [3, 1],
+    ]
+)
+
+k2 = s.gardenNoAdj(
+    4,
+    [
+        [1, 2],
+        [3, 4],
+    ]
+)
+
+k3 = s.gardenNoAdj(
+    4,
+    [
+        [1, 2],
+        [2, 3],
+        [3, 4],
+        [4, 1],
+        [1, 3],
+        [2, 4],
+    ]
+)
+
+print(k1)
+print(k2)
+print(k3)
