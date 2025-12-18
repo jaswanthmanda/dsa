@@ -1,3 +1,5 @@
+from collections import deque, Counter
+
 # Get Watched videos by your friends
 """
 There are n people, each person has a unique id between 0 and n-1.
@@ -54,3 +56,67 @@ class Solution(object):
         :type level: int
         :rtype: List[str]
         """
+        def bfs(start, adjlist, watchedVideos, level):
+            ans = []
+            q = deque([(start, 0)])
+            vis = set([start])
+
+            while q:
+                node, lev = q.popleft()
+
+                if lev == level:
+                    continue
+
+                for nei in adjlist[node]:
+                    kas = lev + 1
+                    if nei not in vis:
+                        if kas == level:
+                            ans.extend(watchedVideos[nei])
+                        vis.add(nei)
+                        q.append((nei, kas))
+
+            freq = Counter(ans)
+
+            return sorted(freq.keys(), key=lambda x: (freq[x], x))
+
+        return bfs(id, friends, watchedVideos, level)
+
+
+s = Solution()
+
+k1 = s.watchedVideosByFriends(
+    [
+        ["A", "B"],
+        ["C"],
+        ["B", "C"],
+        ["D"],
+    ],
+    [
+        [1, 2],
+        [0, 3],
+        [0, 3],
+        [1, 2],
+    ],
+    0,
+    1,
+)
+
+k2 = s.watchedVideosByFriends(
+    [
+        ["A", "B"],
+        ["C"],
+        ["B", "C"],
+        ["D"],
+    ],
+    [
+        [1, 2],
+        [0, 3],
+        [0, 3],
+        [1, 2],
+    ],
+    0,
+    2,
+)
+
+print(k1)
+print(k2)

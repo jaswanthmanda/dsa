@@ -1,3 +1,5 @@
+import heapq
+
 # Find the city with smallest number of neighbours at a threshold distance
 """
 There are n cities numbered from 0 to n-1.
@@ -50,6 +52,36 @@ Constraints:
 
 
 class Solution(object):
+    def srt(self, start, n, adjlist, distanceThres):
+        dist = [float("inf")] * n
+        dist[start] = 0
+        pq = [(0, start)]
+
+        while pq:
+            dis, node = heapq.heappop(pq)
+
+            if dist[node] < dis:
+                continue
+
+            if dis > distanceThres:
+                continue
+
+            for nei_item in adjlist[node]:
+                nei, nei_wt = nei_item
+                kas = nei_wt + dis
+                if dist[nei] > kas:
+                    dist[nei] = kas
+                    heapq.heappush(pq, (kas, nei))
+                    # if kas <= distanceThres:
+                    #     items.add(nei)
+
+        cnt = 0
+        for i, item in enumerate(dist):
+            if i != start and item <= distanceThres:
+                cnt += 1
+
+        return cnt
+
     def findTheCity(self, n, edges, distanceThreshold):
         """
         :type n: int
@@ -57,3 +89,51 @@ class Solution(object):
         :type distanceThreshold: int
         :rtype: int
         """
+        # build adjlist
+        adjList = {i: [] for i in range(n)}
+        for edge in edges:
+            adjList[edge[0]].append((edge[1], edge[2]))
+            adjList[edge[1]].append((edge[0], edge[2]))
+
+        min_cnt = float("inf")
+        max_item = float("-inf")
+        for i in range(n):
+            k = self.srt(i, n, adjList, distanceThreshold)
+            print(i, k)
+            if min_cnt > k:
+                min_cnt = k
+                max_item = i
+            elif min_cnt == k and max_item < i:
+                max_item = i
+
+        return max_item
+
+
+s = Solution()
+
+k1 = s.findTheCity(
+    4,
+    [
+        [0, 1, 3],
+        [1, 2, 1],
+        [1, 3, 4],
+        [2, 3, 1],
+    ],
+    4,
+)
+
+k2 = s.findTheCity(
+    5,
+    [
+        [0, 1, 2],
+        [0, 4, 8],
+        [1, 2, 3],
+        [1, 4, 2],
+        [2, 3, 1],
+        [3, 4, 1],
+    ],
+    2,
+)
+
+print(k1)
+print(k2)

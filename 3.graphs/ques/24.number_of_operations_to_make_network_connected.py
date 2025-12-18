@@ -40,6 +40,33 @@ Constraints:
 """
 
 
+class DisjointSet:
+    def __init__(self, V):
+        self.parents = [i for i in range(V)]
+        self.sizes = [1 for i in range(V)]
+
+    def findUPar(self, u):
+        if u == self.parents[u]:
+            return u
+
+        self.parents[u] = self.findUPar(self.parents[u])
+        return self.parents[u]
+
+    def unionBySizes(self, u, v):
+        ulp_u = self.findUPar(u)
+        ulp_v = self.findUPar(v)
+
+        if ulp_u == ulp_v:
+            return
+
+        if self.sizes[ulp_u] < self.sizes[ulp_v]:
+            self.parents[ulp_u] = ulp_v
+            self.sizes[ulp_v] += self.sizes[ulp_u]
+        else:
+            self.parents[ulp_v] = ulp_u
+            self.sizes[ulp_u] += self.sizes[ulp_v]
+
+
 class Solution(object):
     def makeConnected(self, n, connections):
         """
@@ -47,3 +74,71 @@ class Solution(object):
         :type connections: List[List[int]]
         :rtype: int
         """
+        if len(connections) < n - 1:
+            return -1
+
+        ds = DisjointSet(n)
+
+        for u, v in connections:
+            ds.unionBySizes(u, v)
+
+        len_comp = len({ds.findUPar(i): 1 for i in range(n)})
+
+        return len_comp - 1
+
+
+s = Solution()
+
+k1 = s.makeConnected(
+    4,
+    [
+        [0, 1],
+        [0, 2],
+        [1, 2],
+    ],
+)
+
+k2 = s.makeConnected(
+    6,
+    [
+        [0, 1],
+        [0, 2],
+        [0, 3],
+        [1, 2],
+        [1, 3],
+    ],
+)
+
+k3 = s.makeConnected(
+    6,
+    [
+        [0, 1],
+        [0, 2],
+        [0, 3],
+        [1, 2],
+    ],
+)
+
+k4 = s.makeConnected(
+    12,
+    [
+        [1, 5],
+        [1, 7],
+        [1, 2],
+        [1, 4],
+        [3, 7],
+        [4, 7],
+        [3, 5],
+        [0, 6],
+        [0, 1],
+        [0, 4],
+        [2, 6],
+        [0, 3],
+        [0, 2],
+    ],
+)
+
+print(k1)
+print(k2)
+print(k3)
+print(k4)
