@@ -38,3 +38,92 @@ class Solution(object):
         :type rightChild: List[int]
         :rtype: bool
         """
+        # build adjlist
+        indegree = [0] * n
+        for i in range(n):
+            if leftChild[i] != -1:
+                indegree[leftChild[i]] += 1
+                if indegree[leftChild[i]] > 1:
+                    return False
+            if rightChild[i] != -1:
+                indegree[rightChild[i]] += 1
+                if indegree[rightChild[i]] > 1:
+                    return False
+
+        roots = [i for i in range(n) if indegree[i] == 0]
+        if len(roots) != 1:
+            return False
+
+        root = roots[0]
+
+        vis = set()
+
+        def dfs(start):
+            if start in vis:
+                return False
+
+            vis.add(start)
+
+            for child in (leftChild[start], rightChild[start]):
+                if child != -1:
+                    kk = dfs(child)
+                    if not kk:
+                        return False
+
+            return True
+
+        if not dfs(root):
+            return False
+
+        return len(vis) == n
+
+
+s = Solution()
+
+k1 = s.validateBinaryTreeNodes(
+    4,
+    [
+        1,
+        -1,
+        3,
+        -1,
+    ],
+    [
+        2,
+        -1,
+        -1,
+        -1,
+    ],
+)
+
+k2 = s.validateBinaryTreeNodes(
+    4,
+    [
+        1,
+        -1,
+        3,
+        -1,
+    ],
+    [
+        2,
+        3,
+        -1,
+        -1,
+    ],
+)
+
+k3 = s.validateBinaryTreeNodes(
+    2,
+    [
+        1,
+        0,
+    ],
+    [
+        -1,
+        -1,
+    ],
+)
+
+print(k1)
+print(k2)
+print(k3)
