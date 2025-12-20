@@ -1,3 +1,5 @@
+from collections import deque
+
 # Path with maximum probability
 """
 You are given an undirected weighted graph of n nodes (0-indexed), represented by
@@ -51,3 +53,81 @@ class Solution(object):
         :type end_node: int
         :rtype: float
         """
+        if end_node >= n:
+            return float(0)
+
+        # build adj list
+        adjlist = {i: [] for i in range(n)}
+        for i, edge in enumerate(edges):
+            adjlist[edge[0]].append((edge[1], succProb[i]))
+            adjlist[edge[1]].append((edge[0], succProb[i]))
+
+        # vis = set([start_node])
+        q = deque([(start_node, float(1))])
+        dist = [float("-inf")] * n
+        dist[start_node] = float(1)
+
+        while q:
+            node, sp = q.popleft()
+
+            if sp < dist[node]:
+                continue
+
+            for nei, nei_p in adjlist[node]:
+                kas = nei_p * sp
+                if dist[nei] < kas:
+                    dist[nei] = kas
+                    q.append((nei, kas))
+
+        return dist[end_node] if dist[end_node] != float("-inf") else float(0)
+
+
+s = Solution()
+
+k1 = s.maxProbability(
+    3,
+    [
+        [0, 1],
+        [1, 2],
+        [0, 2],
+    ],
+    [
+        0.5,
+        0.5,
+        0.2,
+    ],
+    0,
+    2,
+)
+
+k2 = s.maxProbability(
+    3,
+    [
+        [0, 1],
+        [1, 2],
+        [0, 2],
+    ],
+    [
+        0.5,
+        0.5,
+        0.3,
+    ],
+    0,
+    2,
+)
+
+k3 = s.maxProbability(
+    3,
+    [
+        [0, 1],
+    ],
+    [
+        0.5,
+    ],
+    0,
+    2,
+)
+
+print(k1)
+print(k2)
+print(k3)

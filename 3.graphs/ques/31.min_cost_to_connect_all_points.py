@@ -1,3 +1,5 @@
+import heapq
+
 # Min cost to connect all points
 """
 You are given an array points representing integer coordinates
@@ -36,3 +38,55 @@ class Solution(object):
         :type points: List[List[int]]
         :rtype: int
         """
+        # prim's algo
+        n = len(points)
+        visited = [False] * n
+        minCost = [float("inf")] * n
+        minCost[0] = 0
+
+        heap = [(0, 0)]
+        res = 0
+
+        while heap:
+            cost, i = heapq.heappop(heap)
+
+            if visited[i]:
+                continue
+
+            visited[i] = True
+            res += cost
+
+            for j in range(n):
+                if not visited[j]:
+                    dist = abs(points[i][0] - points[j][0]) + abs(
+                        points[i][1] - points[j][1]
+                    )
+                    if dist < minCost[j]:
+                        minCost[j] = dist
+                        heapq.heappush(heap, (dist, j))
+
+        return res
+
+
+s = Solution()
+
+k1 = s.minCostConnectPoints(
+    [
+        [0, 0],
+        [2, 2],
+        [3, 10],
+        [5, 2],
+        [7, 0],
+    ]
+)
+
+k2 = s.minCostConnectPoints(
+    [
+        [3, 12],
+        [-2, 5],
+        [-4, 1],
+    ]
+)
+
+print(k1)
+print(k2)

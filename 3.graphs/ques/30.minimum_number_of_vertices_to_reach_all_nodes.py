@@ -1,3 +1,5 @@
+from collections import deque
+
 # Minimum number of vertices to reach all nodes
 """
 Given a directed acyclic graph, with n vertices numbered from 0 to n-1, and an array edges
@@ -41,3 +43,52 @@ class Solution(object):
         :type edges: List[List[int]]
         :rtype: List[int]
         """
+        # build adj list
+        adjlist = {i: [] for i in range(n)}
+        kemp = set([i for i in range(n)])
+        # print(kemp)
+
+        for edge in edges:
+            adjlist[edge[0]].append(edge[1])
+            if edge[1] in kemp:
+                kemp.remove(edge[1])
+
+        return list(kemp)
+
+
+s = Solution()
+
+k1 = s.findSmallestSetOfVertices(
+    6,
+    [
+        [0, 1],
+        [0, 2],
+        [2, 5],
+        [3, 4],
+        [4, 2],
+    ],
+)
+
+k2 = s.findSmallestSetOfVertices(
+    5,
+    [
+        [0, 1],
+        [2, 1],
+        [3, 1],
+        [1, 4],
+        [2, 4],
+    ],
+)
+
+k3 = s.findSmallestSetOfVertices(
+    3,
+    [
+        [1, 2],
+        [1, 0],
+        [0, 2],
+    ],
+)
+
+print(k1)
+print(k2)
+print(k3)

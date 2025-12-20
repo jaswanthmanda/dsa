@@ -1,3 +1,5 @@
+from collections import deque
+
 # Reorder routes to make all paths lead to city zero
 """
 There are n cities numbered from 0 to n - 1 and n - 1 roads such that there is only one way to travel
@@ -52,3 +54,78 @@ class Solution(object):
         :type connections: List[List[int]]
         :rtype: int
         """
+        # build adj list
+        adjlist = {i: [] for i in range(n)}
+        for edge in connections:
+            adjlist[edge[0]].append((edge[1], 1))
+            adjlist[edge[1]].append((edge[0], 0))
+
+        vis = [False]*n
+        changes = 0
+        q = deque([0])
+        vis[0] = True
+
+        while q:
+            node = q.popleft()
+
+            for nei, cost in adjlist[node]:
+                if not vis[nei]:
+                    vis[nei] = True
+                    changes += cost
+                    q.append(nei)
+
+        return changes
+
+
+s = Solution()
+
+k1 = s.minReorder(
+    6,
+    [
+        [0, 1],
+        [1, 3],
+        [2, 3],
+        [4, 0],
+        [4, 5],
+    ],
+)
+
+k2 = s.minReorder(
+    5,
+    [
+        [1, 0],
+        [1, 2],
+        [3, 2],
+        [3, 4],
+    ],
+)
+
+k3 = s.minReorder(
+    3,
+    [
+        [1, 0],
+        [2, 0],
+    ],
+)
+
+k4 = s.minReorder(
+    2,
+    [
+        [0, 1],
+    ],
+)
+
+# expected 0
+k5 = s.minReorder(
+    3,
+    [
+        [1, 0],
+        [2, 1],
+    ],
+)
+
+print(k1)
+print(k2)
+print(k3)
+print(k4)
+print(k5)
