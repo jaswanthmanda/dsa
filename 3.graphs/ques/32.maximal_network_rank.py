@@ -44,35 +44,6 @@ Constraints:
 """
 
 
-class DisjointSet:
-    def __init__(self, V):
-        self.nodes = [i for i in range(V)]
-        self.parents = [i for i in range(V)]
-        self.sizes = [1 for i in range(V)]
-
-    def findUPar(self, u):
-        if self.parents[u] == u:
-            return u
-
-        self.parents[u] = self.findUPar(self.parents[u])
-
-        return self.parents[u]
-
-    def unionBySizes(self, u, v):
-        ulp_u = self.findUPar(u)
-        ulp_v = self.findUPar(v)
-
-        if ulp_u == ulp_v:
-            return
-
-        if self.sizes[ulp_u] < self.sizes[ulp_v]:
-            self.parents[ulp_u] = ulp_v
-            self.sizes[ulp_v] += self.sizes[ulp_u]
-        else:
-            self.parents[ulp_v] = ulp_u
-            self.sizes[ulp_u] += self.sizes[ulp_v]
-
-
 class Solution(object):
     def maximalNetworkRank(self, n, roads):
         """
@@ -80,14 +51,28 @@ class Solution(object):
         :type roads: List[List[int]]
         :rtype: int
         """
-        ds = DisjointSet(n)
+        if roads == []:
+            return 0
 
-        for edge in roads:
-            ds.unionBySizes(edge[0], edge[1])
+        degree = [0] * n
+        connected = set()
 
-        # print(ds.sizes)
+        for a, b in roads:
+            degree[a] += 1
+            degree[b] += 1
+            connected.add((a, b))
+            connected.add((b, a))
 
-        return max(ds.sizes)
+        max_rank = 0
+
+        for i in range(n):
+            for j in range(i + 1, n):
+                rank = degree[i] + degree[j]
+                if (i, j) in connected:
+                    rank -= 1
+                max_rank = max(max_rank, rank)
+
+        return max_rank
 
 
 s = Solution()
@@ -126,6 +111,9 @@ k3 = s.maximalNetworkRank(
     ],
 )
 
+k4 = s.maximalNetworkRank(2, [[1, 0]])
+
 print(k1)
 print(k2)
 print(k3)
+print(k4)
