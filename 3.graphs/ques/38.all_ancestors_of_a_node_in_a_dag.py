@@ -1,3 +1,5 @@
+from collections import deque
+
 # All ancestors of a node in a directed acyclic graph
 """
 You are given a positive integer n representing the number of nodes of a Directed Acyclic Graph (DAG).
@@ -55,4 +57,64 @@ class Solution(object):
         :rtype: List[List[int]]
         """
         # build adj list
-        
+        adjlist = {i: [] for i in range(n)}
+        ans = [set() for _ in range(n)]
+        indegree = [0] * n
+        for u, v in edges:
+            adjlist[u].append(v)
+            indegree[v] += 1
+
+        start_nodes = [i for i in range(len(indegree)) if indegree[i] == 0]
+        q = deque(start_nodes)
+
+        while q:
+            node = q.popleft()
+
+            for nei in adjlist[node]:
+                ans[nei].add(node)
+                ans[nei].update(ans[node])
+                indegree[nei] -= 1
+                if indegree[nei] == 0:
+                    q.append(nei)
+
+        for i, item in enumerate(ans):
+            ans[i] = sorted(list(item))
+
+        return ans
+
+
+s = Solution()
+
+k1 = s.getAncestors(
+    8,
+    [
+        [0, 3],
+        [0, 4],
+        [1, 3],
+        [2, 4],
+        [2, 7],
+        [3, 5],
+        [3, 6],
+        [3, 7],
+        [4, 6],
+    ],
+)
+
+k2 = s.getAncestors(
+    5,
+    [
+        [0, 1],
+        [0, 2],
+        [0, 3],
+        [0, 4],
+        [1, 2],
+        [1, 3],
+        [1, 4],
+        [2, 3],
+        [2, 4],
+        [3, 4],
+    ],
+)
+
+print(k1)
+print(k2)

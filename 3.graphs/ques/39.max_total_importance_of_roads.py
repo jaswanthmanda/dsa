@@ -1,3 +1,5 @@
+from collections import deque
+
 # Maximum total importance of Roads
 """
 You are given an integer n denoting the number of cities in a country. The cities are numbered from 0 to n - 1.
@@ -52,3 +54,48 @@ class Solution(object):
         :type roads: List[List[int]]
         :rtype: int
         """
+        # build adjlist
+        adjlist = {i: [] for i in range(n)}
+        degreeNode = [0] * n
+        for edge in roads:
+            adjlist[edge[0]].append(edge[1])
+            adjlist[edge[1]].append(edge[0])
+            degreeNode[edge[0]] += 1
+            degreeNode[edge[1]] += 1
+
+        fin_degree = [(degreeNode[i], i) for i in range(n)]
+        fin_degree.sort()
+        map_imp_nodes = {fin_degree[i][1]: i for i in range(n)}
+        self.max_val = 0
+
+        for i in range(n):
+            self.max_val += degreeNode[i] * (map_imp_nodes[i] + 1)
+
+        return self.max_val
+
+
+s = Solution()
+
+k1 = s.maximumImportance(
+    5,
+    [
+        [0, 1],
+        [1, 2],
+        [2, 3],
+        [0, 2],
+        [1, 3],
+        [2, 4],
+    ],
+)
+
+k2 = s.maximumImportance(
+    5,
+    [
+        [0, 3],
+        [2, 4],
+        [1, 3],
+    ],
+)
+
+print(k1)
+print(k2)
