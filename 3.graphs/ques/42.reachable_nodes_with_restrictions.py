@@ -1,3 +1,5 @@
+from collections import deque
+
 # Reachable nodes with restrictions
 """
 There is an undirected tree with n nodes labeled from 0 to n - 1 and n - 1 edges.
@@ -89,12 +91,45 @@ class Solution(object):
                 print(i)
                 cnt += 1
 
-        # TODO: for optimized try bfs
-
         return cnt
 
 
-s = Solution()
+class Solution2(object):
+    def reachableNodes(self, n, edges, restricted):
+        """
+        :type n: int
+        :type edges: List[List[int]]
+        :type restricted: List[int]
+        :rtype: int
+        """
+        # build adjlist
+        adjlist = {i: [] for i in range(n)}
+        for u, v in edges:
+            adjlist[u].append(v)
+            adjlist[v].append(u)
+
+        kemp = set(restricted)
+
+        def bfs(start, node):
+            vis = set([start])
+            q = deque([start])
+            cnt = 1
+
+            while q:
+                node = q.popleft()
+
+                for nei in adjlist[node]:
+                    if nei not in kemp and nei not in vis:
+                        vis.add(nei)
+                        q.append(nei)
+                        cnt += 1
+
+            return cnt
+
+        return bfs(0, adjlist)
+
+
+s = Solution2()
 
 k1 = s.reachableNodes(7, [[0, 1], [1, 2], [3, 1], [4, 0], [0, 5], [5, 6]], [4, 5])
 
