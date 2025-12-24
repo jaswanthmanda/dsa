@@ -1,3 +1,5 @@
+import heapq
+
 # Find closest node to given two nodes
 """
 You are given a directed graph of n nodes numbered from 0 to n - 1, where each node has at most one outgoing edge.
@@ -50,3 +52,74 @@ class Solution(object):
         :type node2: int
         :rtype: int
         """
+        # build adjlist
+        n = len(edges)
+
+        ####### brute force  ###########
+        # adjlist = {i: [] for i in range(n)}
+        # for i, u in enumerate(edges):
+        #     if u != -1:
+        #         adjlist[i].append(u)
+
+        # def srt(start, adjlist):
+        #     dist = [float("inf")] * n
+        #     pq = [(0, start)]
+        #     dist[start] = 0
+
+        #     while pq:
+        #         steps, node = heapq.heappop(pq)
+
+        #         if steps > dist[node]:
+        #             continue
+
+        #         for nei in adjlist[node]:
+        #             kas = steps + 1
+        #             if dist[nei] > kas:
+        #                 dist[nei] = kas
+        #                 heapq.heappush(pq, (kas, nei))
+
+        #     return dist
+
+        def get_dist(start):
+            dist = [float('inf')]*n
+            steps = 0
+            cur = start
+            while cur != -1 and dist[cur] == float('inf'):
+                dist[cur] = steps
+                steps += 1
+                cur = edges[cur]
+
+            return dist
+
+        node1_dist = get_dist(node1)
+        node2_dist = get_dist(node2)
+
+        print(node1_dist)
+        print(node2_dist)
+
+        ans = -1
+        small_max = float("inf")
+
+        for i in range(n):
+            if node1_dist[i] != float("inf") and node2_dist[i] != float("inf"):
+
+                kemp = max(node1_dist[i], node2_dist[i])
+
+                if small_max > kemp:
+                    small_max = kemp
+                    ans = i
+
+        return ans
+
+
+s = Solution()
+
+k1 = s.closestMeetingNode([2, 2, 3, -1], 0, 1)
+
+k2 = s.closestMeetingNode([1, 2, -1], 0, 2)
+
+k3 = s.closestMeetingNode([4, 3, 0, 5, 3, -1], 4, 0)
+
+print(k1)
+print(k2)
+print(k3)

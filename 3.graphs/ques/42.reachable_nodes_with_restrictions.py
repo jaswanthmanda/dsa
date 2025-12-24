@@ -39,6 +39,35 @@ Constraints:
 """
 
 
+class DisjointSet:
+    def __init__(self, V):
+        self.nodes = [i for i in range(V)]
+        self.parents = [i for i in range(V)]
+        self.sizes = [1 for i in range(V)]
+
+    def findUPar(self, u):
+        if self.parents[u] == u:
+            return u
+
+        self.parents[u] = self.findUPar(self.parents[u])
+
+        return self.parents[u]
+
+    def unionBySizes(self, u, v):
+        ulp_u = self.findUPar(u)
+        ulp_v = self.findUPar(v)
+
+        if ulp_u == ulp_v:
+            return
+
+        if self.sizes[ulp_u] < self.sizes[ulp_v]:
+            self.parents[ulp_u] = ulp_v
+            self.sizes[ulp_v] += self.sizes[ulp_u]
+        else:
+            self.parents[ulp_v] = ulp_u
+            self.sizes[ulp_u] += self.sizes[ulp_v]
+
+
 class Solution(object):
     def reachableNodes(self, n, edges, restricted):
         """
@@ -47,3 +76,29 @@ class Solution(object):
         :type restricted: List[int]
         :rtype: int
         """
+        ds = DisjointSet(n)
+
+        rest_set = set(restricted)
+        for u, v in edges:
+            if u not in rest_set and v not in rest_set:
+                ds.unionBySizes(u, v)
+
+        cnt = 0
+        for i in range(n):
+            if i not in rest_set and ds.findUPar(i) == ds.findUPar(0):
+                print(i)
+                cnt += 1
+
+        # TODO: for optimized try bfs
+
+        return cnt
+
+
+s = Solution()
+
+k1 = s.reachableNodes(7, [[0, 1], [1, 2], [3, 1], [4, 0], [0, 5], [5, 6]], [4, 5])
+
+k2 = s.reachableNodes(7, [[0, 1], [0, 2], [0, 5], [0, 4], [3, 2], [6, 5]], [4, 2, 1])
+
+print(k1)
+print(k2)
