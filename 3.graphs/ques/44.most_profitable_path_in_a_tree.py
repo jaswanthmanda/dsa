@@ -1,3 +1,5 @@
+from collections import deque
+
 # Most profitable path in a tree
 """
 There is an undirected tree with n nodes labeled from 0 to n - 1, rooted at node 0.
@@ -67,3 +69,78 @@ class Solution(object):
         :type amount: List[int]
         :rtype: int
         """
+        # build adjlist
+        n = len(amount)
+
+        adjlist = {i: [] for i in range(n)}
+        for u, v in edges:
+            adjlist[u].append(v)
+            adjlist[v].append(u)
+
+        bobTime = [float("inf")] * n
+
+        def bfs(start, adjlist):
+            parents = [-1] * n
+
+            q = deque([0])
+            vis = set([0])
+
+            while q:
+                node = q.popleft()
+
+                for nei in adjlist[node]:
+                    if nei != 0 and nei not in vis:
+                        parents[nei] = node
+                        vis.add(nei)
+                        q.append(nei)
+
+            # calc time
+            t = 0
+            cur = bob
+            while cur != -1:
+                bobTime[cur] = t
+                cur = parents[cur]
+                t += 1
+
+        bfs(bob, adjlist)
+
+        # alice ops
+        vis_set = set()
+        self.max_prof = float("-inf")
+
+        def dfs(start, adjlist, curr_prof, time):
+            vis_set.add(start)
+            if time < bobTime[start]:
+                curr_prof += amount[start]
+            elif bobTime[start] == time:
+                curr_prof += amount[start] // 2
+
+            if start != 0 and len(adjlist[start]) == 1:
+                self.max_prof = max(self.max_prof, curr_prof)
+            else:
+                for nei in adjlist[start]:
+                    if nei not in vis_set:
+                        k_time = time + 1
+                        dfs(nei, adjlist, curr_prof, k_time)
+
+        dfs(0, adjlist, 0, 0)
+
+        return self.max_prof
+
+
+s = Solution()
+
+k1 = s.mostProfitablePath(
+    [[0, 1], [1, 2], [1, 3], [3, 4]],
+    3,
+    [-2, 4, 2, -4, 6],
+)
+
+k2 = s.mostProfitablePath(
+    [[0, 1]],
+    1,
+    [-7280, 2350],
+)
+
+print(k1)
+print(k2)

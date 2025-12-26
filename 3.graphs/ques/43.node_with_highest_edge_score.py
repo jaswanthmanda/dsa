@@ -48,3 +48,32 @@ class Solution(object):
         :type edges: List[int]
         :rtype: int
         """
+        n = len(edges)
+
+        # dist
+        rank = [-1] * n
+
+        max_rank = rank[0]
+        item = 0
+
+        for u, v in enumerate(edges):
+            if rank[v] == -1:
+                rank[v] = u
+            else:
+                rank[v] += u
+
+            if max_rank < rank[v]:
+                max_rank = rank[v]
+                item = v
+            elif max_rank == rank[v] and item > v:
+                item = v
+
+        # max_rank = rank[0]
+        # item = 0
+
+        # for i in range(n):
+        #     if rank[i] > max_rank:
+        #         max_rank = rank[i]
+        #         item = i
+
+        return item

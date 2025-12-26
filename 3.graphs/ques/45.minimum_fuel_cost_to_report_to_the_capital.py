@@ -1,3 +1,5 @@
+from collections import deque
+
 # Minimum fuel cost to report to the capital
 """
 There is a tree (i.e., a connected, undirected graph with no cycles) structure country network consisting of n cities
@@ -58,6 +60,42 @@ Constraints:
 - 1 <= seats <= 105
 """
 
+"""
+from math import ceil
+from collections import defaultdict
+
+class Solution:
+    def minimumFuelCost(self, roads, seats):
+        if not roads:
+            return 0
+        
+        adj = defaultdict(list)
+        for u, v in roads:
+            adj[u].append(v)
+            adj[v].append(u)
+        
+        self.fuel = 0
+        
+        def dfs(u, parent):
+            people = 1  # representative of city u
+            
+            for v in adj[u]:
+                if v == parent:
+                    continue
+                child_people = dfs(v, u)
+                
+                # Cars needed for child subtree to move up to u
+                cars = (child_people + seats - 1) // seats
+                self.fuel += cars
+                
+                people += child_people
+            
+            return people
+        
+        dfs(0, -1)
+        return self.fuel
+"""
+
 
 class Solution(object):
     def minimumFuelCost(self, roads, seats):
@@ -66,3 +104,30 @@ class Solution(object):
         :type seats: int
         :rtype: int
         """
+        if len(roads) == 0:
+            return 0
+
+        # build adjlist
+        n = roads[0][0]
+        for u, v in roads:
+            n = max(n, u, v)
+
+        n = n + 1
+
+        adjlist = {i: [] for i in range(n)}
+        indegree = [0 for i in range(n)]
+        for u, v in roads:
+            adjlist[u].append(v)
+            adjlist[v].append(u)
+
+        return sum(dist)
+
+
+s = Solution()
+
+k1 = s.minimumFuelCost([[0, 1], [0, 2], [0, 3]], 5)
+
+k2 = s.minimumFuelCost([[3, 1], [3, 2], [1, 0], [0, 4], [0, 5], [4, 6]], 2)
+
+print(k1)
+print(k2)
