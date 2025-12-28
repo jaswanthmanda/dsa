@@ -54,3 +54,28 @@ class Solution(object):
         :type edges: List[List[int]]
         :rtype: int
         """
+        if not edges:
+            if n == 1:
+                return 0
+            return 0
+
+        indegree = [0] * n
+        for u, v in edges:
+            indegree[v] += 1
+
+        kemp = set([i for i in range(n) if indegree[i] == 0])
+
+        if len(kemp) != 1:
+            return -1
+
+        return kemp.pop()
+
+
+s = Solution()
+
+k1 = s.findChampion(3, [[0, 1], [1, 2]])
+
+k2 = s.findChampion(4, [[0, 2], [1, 3], [1, 2]])
+
+print(k1)
+print(k2)

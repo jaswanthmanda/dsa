@@ -43,6 +43,35 @@ Constraints:
 """
 
 
+class DisjointSet:
+    def __init__(self, V):
+        self.nodes = [i for i in range(V + 1)]
+        self.parents = [i for i in range(V + 1)]
+        self.sizes = [1 for i in range(V + 1)]
+
+    def findUPar(self, u):
+        if u == self.parents[u]:
+            return u
+
+        self.parents[u] = self.findUPar(self.parents[u])
+
+        return self.parents[u]
+
+    def unionBySizes(self, u, v):
+        ulp_u = self.findUPar(u)
+        ulp_v = self.findUPar(v)
+
+        if ulp_u == ulp_v:
+            return
+
+        if self.sizes[ulp_u] < self.sizes[ulp_v]:
+            self.parents[ulp_u] = ulp_v
+            self.sizes[ulp_v] += self.sizes[ulp_u]
+        else:
+            self.parents[ulp_v] = ulp_u
+            self.sizes[ulp_u] += self.sizes[ulp_v]
+
+
 class Solution(object):
     def minScore(self, n, roads):
         """
@@ -50,3 +79,28 @@ class Solution(object):
         :type roads: List[List[int]]
         :rtype: int
         """
+        ds = DisjointSet(n)
+
+        for u, v, _ in roads:
+            ds.unionBySizes(u, v)
+
+        strt_par = ds.findUPar(1)
+        end_par = ds.findUPar(n)
+
+        min_val = float("inf")
+
+        for u, v, z in roads:
+            if strt_par == end_par == ds.findUPar(u):
+                min_val = min(min_val, z)
+
+        return min_val
+
+
+s = Solution()
+
+k1 = s.minScore(4, [[1, 2, 9], [2, 3, 6], [2, 4, 5], [1, 4, 7]])
+
+k2 = s.minScore(4, [[1, 2, 2], [1, 3, 4], [3, 4, 7]])
+
+print(k1)
+print(k2)
