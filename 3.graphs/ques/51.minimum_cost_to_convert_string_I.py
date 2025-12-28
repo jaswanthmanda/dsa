@@ -1,3 +1,5 @@
+import heapq
+
 # Minimum Cost to convert string I
 """
 You are given two 0-indexed strings source and target, both of length n
@@ -69,3 +71,120 @@ class Solution(object):
         :type cost: List[int]
         :rtype: int
         """
+        n = len(original)
+
+        # build adjlist
+        adjlist = {chr(97 + i): [] for i in range(26)}
+        for i in range(n):
+            adjlist[original[i]].append((changed[i], cost[i]))
+
+        def srt(start, target):
+            dist = {chr(97 + i): float("inf") for i in range(26)}
+            pq = [(0, start)]
+            dist[start] = 0
+
+            while pq:
+                dis, node = heapq.heappop(pq)
+
+                if dist[node] < dis:
+                    continue
+
+                for nei, cos in adjlist[node]:
+                    kas = dis + cos
+                    if kas < dist[nei]:
+                        dist[nei] = kas
+                        heapq.heappush(pq, (kas, nei))
+
+            return dist[target]
+
+        src_list = list(source)
+        trt_list = list(target)
+
+        total_cost = 0
+
+        for i in range(len(src_list)):
+            if src_list[i] == trt_list[i]:
+                continue
+
+            val = srt(src_list[i], trt_list[i])
+
+            if val == float("inf"):
+                return -1
+
+            total_cost += val
+
+        return total_cost
+
+
+class SolutionOptimal(object):
+    def minimumCost(self, source, target, original, changed, cost):
+        """
+        :type source: str
+        :type target: str
+        :type original: List[str]
+        :type changed: List[str]
+        :type cost: List[int]
+        :rtype: int
+        """
+        INF = float("inf")
+
+        n = len(original)
+
+        # build adjlist
+        adjlist = {chr(97 + i): [] for i in range(26)}
+        for i in range(n):
+            adjlist[original[i]].append((changed[i], cost[i]))
+
+        dist = [[INF] * 26 for _ in range(26)]
+
+        # cost to stay the same
+        for i in range(26):
+            dist[i][i] = 0
+
+        # fill direct cost
+        for i in range(n):
+            u = ord(original[i]) - 97
+            v = ord(changed[i]) - 97
+            dist[u][v] = min(dist[u][v], cost[i])
+
+        # floyd-warshall algo
+        for k in range(26):
+            for i in range(26):
+                for j in range(26):
+                    if dist[i][k] + dist[k][j] < dist[i][j]:
+                        dist[i][j] = dist[i][k] + dist[k][j]
+
+        # compute total cost
+        total_cost = 0
+        for s, t in zip(source, target):
+            if s == t:
+                continue
+
+            u = ord(s) - 97
+            v = ord(t) - 97
+            if dist[u][v] == INF:
+                return -1
+
+            total_cost += dist[u][v]
+
+        return total_cost
+
+
+s = SolutionOptimal()
+
+k1 = s.minimumCost(
+    "abcd",
+    "acbe",
+    ["a", "b", "c", "c", "e", "d"],
+    ["b", "c", "b", "e", "b", "e"],
+    [2, 5, 5, 1, 2, 20],
+)
+
+
+k2 = s.minimumCost("aaaa", "bbbb", ["a", "c"], ["c", "b"], [1, 2])
+
+k3 = s.minimumCost("abcd", "abce", ["a"], ["e"], [10000])
+
+print(k1)
+print(k2)
+print(k3)
