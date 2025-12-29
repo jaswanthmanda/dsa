@@ -54,3 +54,47 @@ class Solution(object):
         :type invocations: List[List[int]]
         :rtype: List[int]
         """
+        # build adj list
+        adjlist = {i: [] for i in range(n)}
+        indegree = [0] * n
+        for u, v in invocations:
+            adjlist[u].append(v)
+            indegree[v] += 1
+
+        vis = set([])
+        rem = set([])
+
+        def dfs_rem(start):
+            vis.add(start)
+            rem.add(start)
+
+            for nei in adjlist[start]:
+                if nei not in vis:
+                    dfs_rem(nei)
+
+        dfs_rem(k)
+
+        for u, v in invocations:
+            if v in rem and u not in rem:
+                return [i for i in range(n)]
+
+        ans = []
+
+        for i in range(n):
+            if i not in rem:
+                ans.append(i)
+
+        return ans
+
+
+s = Solution()
+
+k1 = s.remainingMethods(4, 1, [[1, 2], [0, 1], [3, 2]])
+
+k2 = s.remainingMethods(5, 0, [[1, 2], [0, 2], [0, 1], [3, 4]])
+
+k3 = s.remainingMethods(3, 2, [[1, 2], [0, 1], [2, 0]])
+
+print(k1)
+print(k2)
+print(k3)

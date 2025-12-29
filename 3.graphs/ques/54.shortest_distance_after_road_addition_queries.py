@@ -79,7 +79,7 @@ class Solution(object):
 
             temp = srt(0)
 
-            if temp != float('inf'):
+            if temp != float("inf"):
                 kemp.append(temp)
             else:
                 kemp.append(-1)
