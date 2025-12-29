@@ -1,3 +1,5 @@
+import heapq
+
 # Shortest distance after road addition queries
 """
 You are given an integer n and a 2D integer array queries.
@@ -47,3 +49,62 @@ class Solution(object):
         :type queries: List[List[int]]
         :rtype: List[int]
         """
+        # build adjlist
+        adjlist = {i: [] for i in range(n)}
+        for i in range(n - 1):
+            adjlist[i].append(i + 1)
+
+        def srt(start):
+            dist = [float("inf")] * n
+            pq = [(0, start)]
+            dist[start] = 0
+
+            while pq:
+                dis, node = heapq.heappop(pq)
+
+                if dist[node] < dis:
+                    continue
+
+                for nei in adjlist[node]:
+                    kas = dis + 1
+                    if kas < dist[nei]:
+                        dist[nei] = kas
+                        heapq.heappush(pq, (kas, nei))
+
+            return dist[n - 1]
+
+        kemp = []
+        for u, v in queries:
+            adjlist[u].append(v)
+
+            temp = srt(0)
+
+            if temp != float('inf'):
+                kemp.append(temp)
+            else:
+                kemp.append(-1)
+
+        return kemp
+
+
+s = Solution()
+
+k1 = s.shortestDistanceAfterQueries(
+    5,
+    [
+        [2, 4],
+        [0, 2],
+        [0, 4],
+    ],
+)
+
+k2 = s.shortestDistanceAfterQueries(
+    4,
+    [
+        [0, 3],
+        [0, 2],
+    ],
+)
+
+print(k1)
+print(k2)

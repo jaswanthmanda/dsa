@@ -1,3 +1,5 @@
+from collections import deque
+
 # Count the number of houses at certain distance I
 """
 You are given three positive integers n, x, and y.
@@ -67,3 +69,49 @@ class Solution(object):
         :type y: int
         :rtype: List[int]
         """
+        # make 0 based
+        x -= 1
+        y -= 1
+
+        # build graph
+        g = [[] for _ in range(n)]
+        for i in range(n - 1):
+            g[i].append(i + 1)
+            g[i + 1].append(i)
+        g[x].append(y)
+        g[y].append(x)
+
+        ans = [0] * n
+
+        # BFS from every node
+        for start in range(n):
+            dist = [-1] * n
+            dist[start] = 0
+            q = deque([start])
+
+            while q:
+                u = q.popleft()
+                for v in g[u]:
+                    if dist[v] == -1:
+                        dist[v] = dist[u] + 1
+                        q.append(v)
+
+            # count ordered pairs
+            for j in range(n):
+                if j != start:
+                    ans[dist[j] - 1] += 1
+
+        return ans
+
+
+s = Solution()
+
+k1 = s.countOfPairs(3, 1, 3)
+
+k2 = s.countOfPairs(5, 2, 4)
+
+k3 = s.countOfPairs(4, 1, 1)
+
+print(k1)
+print(k2)
+print(k3)
