@@ -67,7 +67,6 @@ class Solution(object):
                     continue
 
                 vals = [
-                    (x - 1, y - 1),
                     (x - 1, y),
                     (x + 1, y),
                     (x, y - 1),
@@ -76,11 +75,7 @@ class Solution(object):
 
                 for u, v in vals:
                     if 0 <= u < m and 0 <= v < n:
-                        if x == 0 and y == 0:
-                            kas = tim + 1
-                        else:
-                            kas = tim + 1 + moveTime[x][y]
-                        # kas = tim + 1 + moveTime[x][y]
+                        kas = max(tim, moveTime[u][v]) + 1
                         if kas < dist[u][v]:
                             dist[u][v] = kas
                             heapq.heappush(pq, (kas, (u, v)))
@@ -121,7 +116,7 @@ k4 = s.minTimeToReach(
     ]
 )
 
-# 
+# 81
 k5 = s.minTimeToReach(
     [
         [17, 56],
