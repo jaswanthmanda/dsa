@@ -1,3 +1,6 @@
+import heapq
+from collections import defaultdict
+
 # Power grid maintenance
 """
 You are given an integer c representing c power stations, each with a unique identifier id from 1 to c (1-based indexing).
@@ -59,14 +62,35 @@ Constraints:
 - 1 <= queries[i][1] <= c
 """
 
+
 class DisjointSet:
     def __init__(self, V):
         self.nodes = [i for i in range(V)]
         self.parents = [i for i in range(V)]
         self.sizes = [1 for i in range(V)]
-    
-    def findUPar(self, u, v):
-        ...
+
+    def findUPar(self, u):
+        if u == self.parents[u]:
+            return u
+
+        self.parents[u] = self.findUPar(self.parents[u])
+
+        return self.parents[u]
+
+    def unionBySizes(self, u, v):
+        ulp_u = self.findUPar(u)
+        ulp_v = self.findUPar(v)
+
+        if ulp_u == ulp_v:
+            return None
+
+        if self.sizes[ulp_u] < self.sizes[ulp_v]:
+            self.sizes[ulp_v] += self.sizes[ulp_u]
+            self.parents[ulp_u] = ulp_v
+        else:
+            self.sizes[ulp_u] += self.sizes[ulp_v]
+            self.parents[ulp_v] = ulp_u
+
 
 class Solution(object):
     def processQueries(self, c, connections, queries):
@@ -76,3 +100,88 @@ class Solution(object):
         :type queries: List[List[int]]
         :rtype: List[int]
         """
+        # dsu
+        dsu = DisjointSet(c + 1)
+
+        for u, v in connections:
+            dsu.unionBySizes(u, v)
+
+        heap_map = defaultdict(list)
+
+        # pre compute nodes
+        for i in range(1, c + 1):
+            root = dsu.findUPar(i)
+            heapq.heappush(heap_map[root], i)
+
+        result = []
+        offline = set()
+
+        for ik, node in queries:
+            if ik == 1:
+                if node not in offline:
+                    result.append(node)
+                else:
+                    # lazy deletion process
+                    root_item = dsu.findUPar(node)
+                    heapp = heap_map[root_item]
+
+                    # lazy removal
+                    while heapp and heapp[0] in offline:
+                        heapq.heappop(heapp)
+
+                    result.append(heapp[0] if heapp else -1)
+            else:
+                offline.add(node)
+
+        return result
+
+
+s = Solution()
+
+k1 = s.processQueries(
+    5,
+    [
+        [1, 2],
+        [2, 3],
+        [3, 4],
+        [4, 5],
+    ],
+    [
+        [1, 3],
+        [2, 1],
+        [1, 1],
+        [2, 2],
+        [1, 2],
+    ],
+)
+
+k2 = s.processQueries(
+    3,
+    [],
+    [
+        [1, 1],
+        [2, 1],
+        [1, 1],
+    ],
+)
+
+k3 = s.processQueries(
+    2,
+    [
+        [1, 2],
+    ],
+    [
+        [1, 1],
+        [1, 2],
+        [1, 2],
+        [2, 2],
+        [2, 2],
+        [1, 1],
+        [1, 2],
+        [1, 1],
+    ],
+)
+
+print(k1)
+print(k2)
+print(k3)
