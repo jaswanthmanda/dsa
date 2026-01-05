@@ -71,14 +71,16 @@ class DisjointSet:
         ulp_v = self.findUPar(v)
 
         if ulp_u == ulp_v:
-            return None
+            return False
 
         if self.sizes[ulp_u] < self.sizes[ulp_v]:
             self.sizes[ulp_v] += self.sizes[ulp_u]
             self.parents[ulp_u] = ulp_v
         else:
-            self.sizes[ulp_u] += self.sizes[ulp_u]
+            self.sizes[ulp_u] += self.sizes[ulp_v]
             self.parents[ulp_v] = ulp_u
+
+        return True
 
 
 class Solution(object):
@@ -89,20 +91,74 @@ class Solution(object):
         :type k: int
         :rtype: int
         """
+        # Compute initial component count
+        dsu_temp = DisjointSet(n)
+
+        for u, v, _ in edges:
+            dsu_temp.unionBySizes(u, v)
+
+        ini_comp = len(set([dsu_temp.findUPar(i) for i in range(n)]))
+
+        if ini_comp >= k:
+            return 0
+
         dsu = DisjointSet(n)
 
-        heap_item = [[-1 * w, (u, v)] for u, v, w in edges]
+        edges.sort(key=lambda x: -x[2])
 
-        t = 0
+        curr_comp = n
+        last_valid = None
 
-        def comp_count():
-            return len(dsu.)
+        for u, v, t in edges:
+            if curr_comp >= k:
+                last_valid = t
 
-        while heap_item:
-            ngw, kk = heapq.heappop(heap_item)
+            if dsu.unionBySizes(u, v):
+                curr_comp -= 1
 
-            x, y = kk
+            if curr_comp < k:
+                return last_valid if last_valid is not None else t
 
-            comp_set.remove(x) 
+        return last_valid if last_valid is not None else 0
 
-            if len(comp_set) >= k:
+
+s = Solution()
+
+k1 = s.minTime(
+    2,
+    [
+        [0, 1, 3],
+    ],
+    2,
+)
+
+k2 = s.minTime(
+    3,
+    [
+        [0, 1, 2],
+        [1, 2, 4],
+    ],
+    3,
+)
+
+k3 = s.minTime(
+    3,
+    [
+        [0, 2, 5],
+    ],
+    2,
+)
+
+k4 = s.minTime(
+    3,
+    [
+        [2, 0, 4242],
+        [2, 1, 7212],
+    ],
+    2,
+)
+
+print(k1)
+print(k2)
+print(k3)
+print(k4)
