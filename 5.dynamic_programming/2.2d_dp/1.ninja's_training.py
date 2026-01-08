@@ -1,7 +1,10 @@
 # Ninja's training
 """
-A ninja has planned a n-day training schedule. Each day he has to perform one of three activities - running,
-stealth training, or fighting practice.
+A ninja has planned a n-day training schedule. Each day he has to perform one of three activities
+-
+running,
+stealth tranetwining,
+or fighting practice.
 The same activity cannot be done on two consecutive
 days and the ninja earns a specific number of merit points,
 based on the activity and the given day.
@@ -42,4 +45,58 @@ Constraints:
 
 
 class Solution:
-    def ninjaTraining(self, matrix): ...
+    def func(self, ind, last, matrix, dp):
+        if ind == 0:
+            maxi_0 = float("-inf")
+
+            for i in range(3):
+                if i != last:
+                    maxi_0 = max(maxi_0, matrix[ind][i])
+
+            return maxi_0
+
+        # if last < n:
+        if dp[ind][last] != -1:
+            return dp[ind][last]
+
+        maxi = float("-inf")
+
+        for i in range(3):
+            if i != last:
+                maxi = max(
+                    maxi, matrix[ind][i] + self.func(ind - 1, i, matrix, dp)
+                )
+
+        # if last < 3:
+        dp[ind][last] = maxi
+
+        return dp[ind][last]
+
+    def ninjaTraining(self, matrix):
+        n = len(matrix)
+
+        dp = [[-1] * 4 for _ in range(n)]
+
+        return self.func(n - 1, 3, matrix, dp)
+
+
+s = Solution()
+
+k1 = s.ninjaTraining(
+    [
+        [10, 40, 70],
+        [20, 50, 80],
+        [30, 60, 90],
+    ]
+)
+
+k2 = s.ninjaTraining(
+    [
+        [70, 40, 10],
+        [180, 20, 5],
+        [200, 60, 30],
+    ]
+)
+
+print(k1)
+print(k2)
