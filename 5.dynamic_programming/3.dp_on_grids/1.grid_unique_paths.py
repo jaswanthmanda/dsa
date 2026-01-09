@@ -33,18 +33,16 @@ class Solution:
     def func(self, r, c, dp):
         if r == 0 and c == 0:
             return 1
+        if r < 0 or c < 0:
+            return 0
 
         if dp[r][c] != -1:
             return dp[r][c]
 
-        ways = 0
+        up = self.func(r - 1, c, dp)
+        left = self.func(r, c - 1, dp)
 
-        if r > 0:
-            ways += self.func(r - 1, c, dp)
-        if c > 0:
-            ways += self.func(r, c - 1, dp)
-
-        dp[r][c] = ways
+        dp[r][c] = up + left
 
         return dp[r][c]
 
@@ -55,6 +53,10 @@ class Solution:
             dp[0][i] = 1
 
         return self.func(m - 1, n - 1, dp)
+
+
+class SolutionOptimal:
+    def uniquePaths(self, m, n): ...
 
 
 s = Solution()
