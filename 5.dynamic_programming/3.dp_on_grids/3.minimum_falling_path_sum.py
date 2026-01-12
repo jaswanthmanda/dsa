@@ -76,7 +76,80 @@ class Solution:
         return min_sum
 
 
-s = Solution()
+class SolutionOptimal:
+    def minFallingPathSum(self, matrix):
+        m = len(matrix)
+        n = len(matrix[0])
+
+        dp = [[-1] * (n + 1) for _ in range(m)]
+
+        for j in range(n):
+            dp[0][j] = matrix[0][j]
+
+        for i in range(1, m):
+            for j in range(n):
+                u = matrix[i][j] + dp[i - 1][j]
+                v = matrix[i][j]
+                if j - 1 >= 0:
+                    v += dp[i - 1][j - 1]
+                else:
+                    v += float('inf')
+
+                ld = matrix[i][j]
+                if j + 1 < n:
+                    ld += dp[i - 1][j + 1]
+                else:
+                    ld += float('inf')
+
+                dp[i][j] = min(u, v, ld)
+
+        maxi = float('inf')
+        for i in range(n):
+            maxi = min(maxi, dp[m - 1][i])
+
+        return maxi
+
+
+class SolutionOptimalSpace:
+    def minFallingPathSum(self, matrix):
+        m = len(matrix)
+        n = len(matrix[0])
+
+        prev, curr = [0] * (n + 1), [0] * (n + 1)
+
+        prev = matrix[0][:]  # copy first row
+
+        for j in range(n):
+            prev[j] = matrix[0][j]
+
+        for i in range(1, m):
+            curr = [0] * n
+            for j in range(n):
+                u = matrix[i][j] + prev[j]
+                v = matrix[i][j]
+                if j - 1 >= 0:
+                    v += prev[j - 1]
+                else:
+                    v += float('inf')
+
+                ld = matrix[i][j]
+                if j + 1 < n:
+                    ld += prev[j + 1]
+                else:
+                    ld += float('inf')
+
+                curr[j] = min(u, v, ld)
+
+            prev = curr
+
+        maxi = float('inf')
+        for i in range(n):
+            maxi = min(maxi, prev[i])
+
+        return maxi
+
+
+s = SolutionOptimalSpace()
 
 k1 = s.minFallingPathSum(
     [
