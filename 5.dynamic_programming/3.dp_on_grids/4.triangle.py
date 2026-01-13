@@ -34,31 +34,69 @@ The answer will not exceed 109
 
 
 class Solution:
-    def func(self, i, j, matrix):
+    def func(self, i, j, matrix, dp):
         if i < 0 or j < 0 or j >= len(matrix[i]):
             return float("inf")
 
         if i == 0:
             return matrix[0][j]
 
-        u = matrix[i][j] + self.func(i - 1, j, matrix)
-        v = matrix[i][j] + self.func(i - 1, j + 1, matrix)
+        if dp[i][j] != -1:
+            return dp[i][j]
 
-        return min(u, v)
+        u = matrix[i][j] + self.func(i - 1, j, matrix, dp)
+        v = matrix[i][j] + self.func(i - 1, j - 1, matrix, dp)
+
+        dp[i][j] = min(u, v)
+
+        return dp[i][j]
 
     def minTriangleSum(self, triangle):
         m = len(triangle)
         n = len(triangle[m - 1])
 
-        maxi = float('inf')
+        maxi = float("inf")
 
-        for i in range(n):
-            maxi = min(maxi, self.func(m - 1, i, triangle))
+        dp = [[-1] * (len(triangle[i]) + 1) for i in range(m)]
+
+        for i in range(n - 1, -1, -1):
+            maxi = min(maxi, self.func(m - 1, i, triangle, dp))
 
         return maxi
 
 
-s = Solution()
+class SolutionOptimal:
+    def minTriangleSum(self, triangle):
+        m = len(triangle)
+        n = len(triangle[m - 1])
+
+        prev = [triangle[0][0]]
+
+        for i in range(1, m):
+            curr = [0] * (len(triangle[i]))
+            for j in range(len(triangle[i])):
+                if j >= len(prev):
+                    u = float("inf")
+                else:
+                    u = triangle[i][j] + prev[j]
+
+                if j - 1 < 0:
+                    v = float("inf")
+                else:
+                    v = triangle[i][j] + prev[j - 1]
+
+                curr[j] = min(u, v)
+
+            prev = curr
+
+        mini = float("inf")
+        for i in range(n):
+            mini = min(mini, prev[i])
+
+        return mini
+
+
+s = SolutionOptimal()
 
 k1 = s.minTriangleSum(
     [
