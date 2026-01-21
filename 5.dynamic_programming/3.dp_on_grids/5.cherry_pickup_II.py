@@ -1,3 +1,5 @@
+import copy
+
 # Cherry Pickup II
 """
 Given a n x m 2d integer array called matrix where matrix[i][j] represents the number of cherries you can pick up from the (i, j) cell.
@@ -44,33 +46,139 @@ Constraints
 
 # brute force
 class Solution:
-    def func(self, i, j1 j2, matrix):
+    def func(self, i, j1, j2, matrix, dp):
         if j1 < 0 or j2 < 0 or j1 >= len(matrix[0]) or j2 >= len(matrix[0]):
             return float("-inf")
 
-        if i == 0:
-            return matrix[0][j]
+        if i == len(matrix) - 1:
+            if j1 == j2:
+                return matrix[i][j1]
+            return matrix[i][j1] + matrix[i][j2]
 
-        u_r1 = self.func(i - 1, j - 1, matrix)
-        v_r1 = self.func(i - 1, j, matrix)
-        z_r1 = self.func(i - 1, j + 1, matrix)
+        if dp[i][j1][j2] != -1:
+            return dp[i][j1][j2]
 
-        u_r2 = self.func(i - 1, j - 1, matrix)
-        v_r2 = self.func(i - 1, j, matrix)
-        z_r2 = self.func(i - 1, j + 1, matrix)
+        maxi = float("-inf")
 
-        return matrix[i][j] + min(u_r1, v_r1, z_r1, u_r2, v_r2, z_r2)
+        for dj1 in range(-1, 2):
+            for dj2 in range(-1, 2):
+                if j1 == j2:
+                    value = matrix[i][j1]
+                else:
+                    value = matrix[i][j1] + matrix[i][j2]
+
+                value += self.func(
+                    i + 1,
+                    j1 + dj1,
+                    j2 + dj2,
+                    matrix,
+                    dp,
+                )
+
+                maxi = max(maxi, value)
+
+        dp[i][j1][j2] = maxi
+
+        return dp[i][j1][j2]
 
     def cherryPickup(self, matrix):
         m = len(matrix)
         n = len(matrix[0])
 
-        item = self.func()
+        dp = [[[-1 for _ in range(n)] for _ in range(n)] for _ in range(m)]
 
-        return 0
+        return self.func(0, 0, n - 1, matrix, dp)
 
 
-s = Solution()
+class SolutionOptimal:
+    def cherryPickup(self, matrix):
+        m = len(matrix)
+        n = len(matrix[0])
+
+        dp = [[[0 for _ in range(n)] for _ in range(n)] for _ in range(m)]
+
+        for j1 in range(0, n):
+            for j2 in range(0, n):
+                if j1 == j2:
+                    dp[m - 1][j1][j2] = matrix[m - 1][j1]
+                else:
+                    dp[m - 1][j1][j2] = matrix[m - 1][j1] + matrix[m - 1][j2]
+
+        for i in range(m - 2, -1, -1):
+            for j1 in range(n):
+                for j2 in range(n):
+                    maxi = float("-inf")
+                    for dj1 in range(-1, 2):
+                        for dj2 in range(-1, 2):
+                            if j1 == j2:
+                                value = matrix[i][j1]
+                            else:
+                                value = matrix[i][j1] + matrix[i][j2]
+
+                            if (
+                                j1 + dj1 >= 0
+                                and j1 + dj1 < n
+                                and j2 + dj2 >= 0
+                                and j2 + dj2 < n
+                            ):
+                                value += dp[i + 1][j1 + dj1][j2 + dj2]
+                            else:
+                                value += float("-inf")
+
+                            maxi = max(maxi, value)
+
+                    dp[i][j1][j2] = maxi
+
+        return dp[0][0][n - 1]
+
+
+class SolutionOptimalSpace:
+    def cherryPickup(self, matrix):
+        m = len(matrix)
+        n = len(matrix[0])
+
+        front = [[0] * (n + 1) for _ in range(n)]
+        curr = [[0] * (n + 1) for _ in range(n)]
+
+        for j1 in range(0, n):
+            for j2 in range(0, n):
+                if j1 == j2:
+                    front[j1][j2] = matrix[m - 1][j1]
+                else:
+                    front[j1][j2] = matrix[m - 1][j1] + matrix[m - 1][j2]
+
+        for i in range(m - 2, -1, -1):
+            curr = [[0] * (n + 1) for _ in range(n)]
+            for j1 in range(n):
+                for j2 in range(n):
+                    maxi = float("-inf")
+                    for dj1 in range(-1, 2):
+                        for dj2 in range(-1, 2):
+                            if j1 == j2:
+                                value = matrix[i][j1]
+                            else:
+                                value = matrix[i][j1] + matrix[i][j2]
+
+                            if (
+                                j1 + dj1 >= 0
+                                and j1 + dj1 < n
+                                and j2 + dj2 >= 0
+                                and j2 + dj2 < n
+                            ):
+                                value += front[j1 + dj1][j2 + dj2]
+                            else:
+                                value += float("-inf")
+
+                            maxi = max(maxi, value)
+
+                    curr[j1][j2] = maxi
+
+            front, curr = curr, front
+
+        return front[0][n - 1]
+
+
+s = SolutionOptimalSpace()
 
 k1 = s.cherryPickup(
     [
