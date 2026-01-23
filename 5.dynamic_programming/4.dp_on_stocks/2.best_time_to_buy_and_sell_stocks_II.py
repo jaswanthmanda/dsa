@@ -30,4 +30,84 @@ Constraints
 
 
 class Solution:
-    def stockBuySell(self, arr, n): ...
+    def f(self, ind, buy, arr, n, dp):
+        if ind == n:
+            return 0
+
+        if dp[ind][buy] != -1:
+            return dp[ind][buy]
+
+        if buy:
+            prof = max(
+                -arr[ind] + self.f(ind + 1, 0, arr, n, dp),
+                0 + self.f(ind + 1, 1, arr, n, dp),
+            )
+        else:
+            prof = max(
+                arr[ind] + self.f(ind + 1, 1, arr, n, dp),
+                0 + self.f(ind + 1, 0, arr, n, dp),
+            )
+
+        dp[ind][buy] = prof
+        return prof
+
+    def stockBuySell(self, arr, n):
+        dp = [[-1] * 2 for _ in range(n)]
+        return self.f(0, 1, arr, n, dp)
+
+
+class SolutionOptimal:
+    def stockBuySell(self, arr, n):
+        dp = [[0] * 2 for _ in range(n + 1)]
+
+        dp[n][0], dp[n][1] = 0, 0
+
+        for ind in range(n - 1, -1, -1):
+            for buy in range(2):
+                if buy:
+                    prof = max(
+                        -arr[ind] + dp[ind + 1][0],
+                        0 + dp[ind + 1][1],
+                    )
+                else:
+                    prof = max(arr[ind] + dp[ind + 1][1], 0 + dp[ind + 1][0])
+
+                dp[ind][buy] = prof
+
+        return dp[0][1]
+
+
+class SolutionOptimalSpace:
+    def stockBuySell(self, arr, n):
+        ahead = [0, 0]
+        curr = [0, 0]
+
+        ahead[0], ahead[1] = 0, 0
+
+        for ind in range(n - 1, -1, -1):
+            curr = [0, 0]
+            for buy in range(2):
+                if buy:
+                    prof = max(
+                        -arr[ind] + ahead[0],
+                        0 + ahead[1],
+                    )
+                else:
+                    prof = max(arr[ind] + ahead[1], 0 + ahead[0])
+
+                curr[buy] = prof
+
+            ahead = curr
+
+        return ahead[1]
+
+
+
+s = SolutionOptimalSpace()
+
+k1 = s.stockBuySell([9, 2, 6, 4, 7, 3], 6)
+
+k2 = s.stockBuySell([2, 3, 4, 5, 6], 5)
+
+print(k1)
+print(k2)
