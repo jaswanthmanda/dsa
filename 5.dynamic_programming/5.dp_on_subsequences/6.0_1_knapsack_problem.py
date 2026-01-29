@@ -53,13 +53,71 @@ class Solution:
 
 class SolutionOptimal:
     def knapsack01(self, wt, val, n, W):
-        dp = [[0] (W + 1) for _ in range(n)]
+        dp = [[0] * (W + 1) for _ in range(n)]
 
-        for i in range(n):
-            dp[i][0]
+        for i in range(wt[0], W):
+            dp[0][i] = val[0]
+
+        for ind in range(1, n):
+            for tar in range(1, W + 1):
+                take = float("-inf")
+                if wt[ind] <= tar:
+                    take = val[ind] + dp[ind - 1][tar - wt[ind]]
+                not_take = 0 + dp[ind - 1][tar]
+
+                dp[ind][tar] = max(take, not_take)
+
+        return dp[n - 1][W]
 
 
-s = Solution()
+class SolutionOptimalSpace2D:
+    def knapsack01(self, wt, val, n, W):
+        if n < 2:
+            return val[0] if wt[0] <= W else 0
+
+        prev, curr = [0] * (W + 1), [0] * (W + 1)
+
+        for i in range(wt[0], W):
+            prev[i] = val[0]
+
+        for ind in range(1, n):
+            curr = [0] * (W + 1)
+            for tar in range(W + 1):
+                take = float("-inf")
+                if wt[ind] <= tar:
+                    take = val[ind] + prev[tar - wt[ind]]
+                not_take = 0 + prev[tar]
+
+                curr[tar] = max(take, not_take)
+
+            prev = curr
+
+        return prev[W]
+
+
+class SolutionOptimalSpace1D:
+    def knapsack01(self, wt, val, n, W):
+        if n < 2:
+            return val[0] if wt[0] <= W else 0
+
+        prev = [0] * (W + 1)
+
+        for i in range(wt[0], W):
+            prev[i] = val[0]
+
+        for ind in range(1, n):
+            for tar in range(W, -1, -1):
+                take = float("-inf")
+                if wt[ind] <= tar:
+                    take = val[ind] + prev[tar - wt[ind]]
+                not_take = 0 + prev[tar]
+
+                prev[tar] = max(take, not_take)
+
+        return prev[W]
+
+
+s = SolutionOptimalSpace1D()
 
 k1 = s.knapsack01([10, 20, 30], [60, 100, 120], 3, 50)
 
