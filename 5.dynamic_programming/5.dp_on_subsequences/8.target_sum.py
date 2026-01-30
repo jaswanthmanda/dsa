@@ -32,5 +32,85 @@ Constraints:
 
 
 class Solution:
+    def f(self, ind, target, nums, dp):
+        if ind < 0:
+            if target == 0:
+                return 1
+            return 0
+
+        # print(ind, target, nums[ind])
+        if dp[ind][target + 1000] != -1:
+            return dp[ind][target + 1000]
+
+        pos = self.f(ind - 1, target + nums[ind], nums, dp)
+        neg = self.f(ind - 1, target - nums[ind], nums, dp)
+
+        dp[ind][target + 1000] = pos + neg
+
+        return pos + neg
+
     def targetSum(self, n, target, nums):
-        ...
+        # totalSum = sum(nums)
+        MOD = (10**9) + 7
+        dp = [[-1] * (10**4 + 1) for _ in range(n)]
+        ans = self.f(n - 1, target, nums, dp)
+        return ans % MOD
+
+
+class SolutionOptimal:
+    """It is basically twisted count subarray sum problem actually have to find the pattern"""
+
+    def kk_return(self, arr, n, k):
+        MOD = (10**9) + 7
+        prev, curr = [0] * (k + 1), [0] * (k + 1)
+
+        if arr[0] == 0:
+            prev[0] = 2
+        else:
+            prev[0] = 1
+
+        if arr[0] != 0 and arr[0] <= k:
+            prev[arr[0]] = 1
+
+        for ind in range(1, n):
+            curr = [0] * (k + 1)
+            for tar in range(k + 1):
+                take = 0
+                not_take = prev[tar]
+                if arr[ind] <= tar:
+                    take = prev[tar - arr[ind]]
+
+                curr[tar] = take + not_take
+            prev = curr
+
+        return prev[k] % MOD
+
+    def targetSum(self, n, target, nums):
+        if target < 0:
+            return 0
+        return self.kk_return(nums, n, target)
+
+
+s = SolutionOptimal()
+
+k1 = s.targetSum(
+    5,
+    4,
+    [1, 2, 7, 1, 5],
+)
+
+k2 = s.targetSum(
+    1,
+    1,
+    [1],
+)
+
+k3 = s.targetSum(
+    3,
+    -22,
+    [22, 21, 4],
+)
+
+print(k1)
+print(k2)
+print(k3)
