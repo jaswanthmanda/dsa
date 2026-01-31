@@ -32,4 +32,88 @@ Constraints
 
 
 class Solution:
-    def count(self, coins, N, amount): ...
+    def f(self, ind, target, arr, dp):
+        if target == 0:
+            return 1
+
+        if ind < 0:
+            return 0
+
+        if dp[ind][target] != -1:
+            return dp[ind][target]
+
+        take = 0
+        if arr[ind] <= target:
+            take = self.f(ind, target - arr[ind], arr, dp)
+        notTake = self.f(ind - 1, target, arr, dp)
+
+        dp[ind][target] = take + notTake
+
+        return take + notTake
+
+    def count(self, coins, N, amount):
+        dp = [[-1] * (amount + 1) for _ in range(N)]
+        return self.f(N - 1, amount, coins, dp)
+
+
+class SolutionOptimal:
+    def count(self, coins, N, amount):
+        MOD = (10**9) + 7
+        dp = [[0] * (amount + 1) for _ in range(N)]
+
+        for i in range(amount + 1):
+            if i % coins[0] == 0:
+                dp[0][i] = 1
+
+        for ind in range(1, N):
+            for tar in range(amount + 1):
+                take = 0
+                if coins[ind] <= tar:
+                    take = dp[ind][tar - coins[ind]]
+                notTake = dp[ind - 1][tar]
+
+                dp[ind][tar] = take + notTake
+
+        return dp[N - 1][amount] % MOD
+
+
+class SolutionOptimalSpace:
+    def count(self, coins, N, amount):
+        MOD = (10**9) + 7
+        prev, curr = [0] * (amount + 1), [0] * (amount + 1)
+
+        for i in range(amount + 1):
+            if i % coins[0] == 0:
+                prev[i] = 1
+
+        for ind in range(1, N):
+            curr = [0] * (amount + 1)
+            for tar in range(amount + 1):
+                take = 0
+                if coins[ind] <= tar:
+                    take = curr[tar - coins[ind]]
+                notTake = prev[tar]
+
+                curr[tar] = take + notTake
+
+            prev = curr
+
+        return prev[amount] % MOD
+
+
+s = SolutionOptimalSpace()
+
+k1 = s.count(
+    [2, 4, 10],
+    3,
+    10,
+)
+
+k2 = s.count(
+    [5],
+    1,
+    5,
+)
+
+print(k1)
+print(k2)
