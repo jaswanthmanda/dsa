@@ -1,3 +1,5 @@
+import bisect
+
 # Longest increasing subsequence
 """
 Given an integer array nums, return the length of the longest strictly increasing subsequence.
@@ -52,23 +54,75 @@ class Solution:
 class SolutionOptimal:
     def LIS(self, nums):
         n = len(nums)
-        dp = [[0] * (n + 1) for _ in range(n)]
+        dp = [[0] * (n + 1) for _ in range(n + 1)]
 
         for ind in range(n - 1, -1, -1):
             for prev_ind in range(ind - 1, -2, -1):
                 # Not Take case
                 # not take
-                lenn = 0 + dp[ind + 1][prev_ind]
+                lenn = 0 + dp[ind + 1][prev_ind + 1]
                 if prev_ind == -1 or (nums[ind] > nums[prev_ind]):
                     # take
-                    lenn = max(lenn, 1 + dp[ind + 1][ind])
+                    lenn = max(lenn, 1 + dp[ind + 1][ind + 1])
 
-                dp[ind][prev_ind + 1] = len
+                dp[ind][prev_ind + 1] = lenn
 
         return dp[0][0]
 
 
-s = SolutionOptimal()
+class SolutionOptimalSpace2D:
+    def LIS(self, nums):
+        n = len(nums)
+        # dp = [[0] * (n + 1) for _ in range(n + 1)]
+        prev, curr = [0] * (n + 1), [0] * (n + 1)
+
+        for ind in range(n - 1, -1, -1):
+            curr = [0] * (n + 1)
+            for prev_ind in range(ind - 1, -2, -1):
+                # Not Take case
+                # not take
+                lenn = 0 + prev[prev_ind + 1]
+                if prev_ind == -1 or (nums[ind] > nums[prev_ind]):
+                    # take
+                    lenn = max(lenn, 1 + prev[ind + 1])
+
+                curr[prev_ind + 1] = lenn
+
+            prev = curr
+
+        return prev[0]
+
+
+class BinarySearchLIS:
+    def binary_search(self, arr, item):
+        low = 0
+        high = len(arr) - 1
+        ans = len(arr)
+        while low <= high:
+            mid = (low + high) // 2
+            if arr[mid] >= item:
+                ans = mid
+                high = mid - 1
+            else:
+                low = mid + 1
+
+        return ans
+
+    def LIS(self, nums):
+        items = [nums[0]]
+        lenn = 1
+        for item in nums:
+            if item > items[-1]:
+                items.append(item)
+                lenn += 1
+            else:
+                ind = self.binary_search(items, item)
+                items[ind] = item
+
+        return lenn
+
+
+s = BinarySearchLIS()
 
 k1 = s.LIS([10, 9, 2, 5, 3, 7, 101, 18])
 
