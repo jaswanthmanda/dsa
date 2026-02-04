@@ -34,37 +34,40 @@ Constraints
 
 
 class Solution:
+    def check_for_all(self, word1, word2):
+        if len(word2) != len(word1) + 1:
+            return False
+
+        i = 0
+        j = 0
+        skipped = False
+        while i < len(word1) and j < len(word2):
+            if word1[i] == word2[j]:
+                i += 1
+                j += 1
+            else:
+                if skipped:
+                    return False
+                skipped = True
+                j += 1
+
+        return True
+
     def longestStringChain(self, words):
         n = len(words)
-        words.sort()
+        words.sort(key=len)
 
-        parent = [0] * n
         dp = [1] * n
 
-        maxLen = 0
-        # lastIndex = 0
+        maxLen = 1
 
         for i in range(n):
-            parent[i] = i
             for prevInd in range(i):
-                kemp1 = set(words[i])
-                kemp2 = set(words[prevInd])
-                # print(words[i], words[prevInd], kemp1.difference(kemp2))
+                if self.check_for_all(words[prevInd], words[i]):
+                    dp[i] = max(dp[i], dp[prevInd] + 1)
 
-                kemp1.intersection_update(kemp2)
+            maxLen = max(maxLen, dp[i])
 
-                if sorted(list(kemp1)) == sorted(list(kemp2)):
-                    if dp[i] < dp[prevInd] + 1:
-                        dp[i] = dp[prevInd] + 1
-                        parent[i] = prevInd
-                    elif dp[i] == dp[prevInd] + 1 and prevInd < parent[i]:
-                        parent[i] = prevInd
-
-            if maxLen < dp[i]:
-                maxLen = dp[i]
-                # lastIndex = i
-
-        # print(dp)
         return maxLen
 
 
