@@ -52,12 +52,19 @@ class Solution:
         if len(arr) < 2:
             return 0
 
-        k11, lasInd = self.kemp(arr)
-        kemp1 = arr[lasInd:]
-        kemp1.reverse()
-        k22, _ = self.kemp(kemp1)
+        ans = 0
+        n = len(arr)
 
-        return k11 + k22 - 1
+        for i in range(n):
+            kemp1 = arr[:i + 1]
+            k11, lasInd = self.kemp(kemp1)
+            kemp2 = arr[i:]
+            kemp2.reverse()
+            k22, _ = self.kemp(kemp2)
+
+            ans = max(ans, k11 + k22 - 1)
+
+        return ans
 
 
 s = Solution()
