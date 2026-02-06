@@ -26,45 +26,32 @@ class Solution:
     def kemp(self, arr):
         n = len(arr)
 
-        maxLen = 0
-        lastIndex = 0
-
-        parent = [0] * n
         dp = [1] * n
 
         for i in range(n):
-            parent[i] = i
             for prevInd in range(i):
                 if arr[i] > arr[prevInd]:
                     if dp[i] < dp[prevInd] + 1:
                         dp[i] = dp[prevInd] + 1
-                        parent[i] = prevInd
-                    elif dp[i] == dp[prevInd] + 1 and parent[i] < prevInd:
-                        parent[i] = prevInd
 
-                if maxLen < dp[i]:
-                    maxLen = dp[i]
-                    lastIndex = i
-
-        return maxLen, lastIndex
+        return dp
 
     def LongestBitonicSequence(self, arr):
         if len(arr) < 2:
             return 0
 
-        ans = 0
         n = len(arr)
 
+        dp1 = self.kemp(arr)
+        arr.reverse()
+        dp2 = self.kemp(arr)
+        dp2.reverse()
+
+        max_len = 0
         for i in range(n):
-            kemp1 = arr[:i + 1]
-            k11, lasInd = self.kemp(kemp1)
-            kemp2 = arr[i:]
-            kemp2.reverse()
-            k22, _ = self.kemp(kemp2)
+            max_len = max(max_len, dp1[i] + dp2[i] - 1)
 
-            ans = max(ans, k11 + k22 - 1)
-
-        return ans
+        return max_len
 
 
 s = Solution()
