@@ -25,47 +25,53 @@ Constraints:
 
 
 class Solution:
-    def f(self, i, j, s1, s2):
-        if i == 0 or j == 0:
-            return 0
-
-        if s1[i - 1] == s2[j - 1]:
-            self.stack.append(s1[i - 1])
-            return self.f(i - 1, j - 1, s1, s2)
-
-        return self.f(i - 1, j, s1, s2) + self.f(i, j - 1, s1, s2)
-
     def shortestCommonSupersequence(self, str1: str, str2: str) -> str:
         m = len(str1)
         n = len(str2)
 
-        self.stack = []
+        dp = [[0] * (n + 1) for _ in range(m + 1)]
 
-        self.f(m, n, str1, str2)
-        print(self.stack)
+        for i in range(m):
+            dp[i][0] = 0
+
+        for j in range(n):
+            dp[0][j] = 0
+
+        for i in range(1, m + 1):
+            for j in range(1, n + 1):
+                if str1[i - 1] == str2[j - 1]:
+                    dp[i][j] = 1 + dp[i - 1][j - 1]
+                else:
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
 
         ans = ""
+        i = m
+        j = n
+        while i > 0 and j > 0:
+            if str1[i - 1] == str2[j - 1]:
+                ans += str1[i - 1]
+                i -= 1
+                j -= 1
+            elif dp[i - 1][j] > dp[i][j - 1]:
+                ans += str1[i - 1]
+                i -= 1
+            else:
+                ans += str2[j - 1]
+                j -= 1
 
-        i = 0
-        j = 0
-        while i < m or j < n:
-            if i < m:
-                if len(self.stack) > 0:
-                    if self.stack[-1] != str1[i]:
-                        ans += str1[i]
-                        i += 1
-                    else:
-                        if j < n:
-                            if len(self.stack) > 0:
-                                if self.stack[-1] != str2[j]:
-                                    ans += str2[j]
-                                    j += 1
-                                else:
-                                    ans += self.stack.pop()
-                                    i += 1
-                                    j += 1
+        while i > 0:
+            ans += str1[i - 1]
+            i -= 1
 
-        return ans
+        while j > 0:
+            ans += str2[j - 1]
+            j -= 1
+
+        kk = list(ans)
+        kk.reverse()
+        new_ans = "".join(kk)
+
+        return new_ans
 
 
 s = Solution()
