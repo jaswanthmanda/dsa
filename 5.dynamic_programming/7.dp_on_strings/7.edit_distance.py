@@ -42,13 +42,90 @@ Constraints:
 
 class Solution:
     def f(self, i, j, s1, s2, dp):
-        pass
+        if i == 0:
+            return j
+        if j == 0:
+            return i
+
+        if dp[i][j] != -1:
+            return dp[i][j]
+
+        if s1[i - 1] == s2[j - 1]:
+            return 0 + self.f(i - 1, j - 1, s1, s2, dp)
+
+        dp[i][j] = 1 + min(
+            self.f(i - 1, j, s1, s2, dp),
+            min(
+                self.f(i, j - 1, s1, s2, dp),
+                self.f(i - 1, j - 1, s1, s2, dp),
+            ),
+        )
+
+        return dp[i][j]
 
     def editDistance(self, start, target):
-        pass
+        m = len(start)
+        n = len(target)
+
+        dp = [[-1] * (n + 1) for _ in range(m + 1)]
+
+        return self.f(m, n, start, target, dp)
 
 
-s = Solution()
+class SolutionOptimalSpace:
+    def editDistance(self, start, target):
+        m = len(start)
+        n = len(target)
+
+        dp = [[0] * (n + 1) for _ in range(m + 1)]
+
+        for j in range(n + 1):
+            dp[0][j] = j
+
+        for i in range(m + 1):
+            dp[i][0] = i
+
+        for i in range(1, m + 1):
+            for j in range(1, n + 1):
+                if start[i - 1] == target[j - 1]:
+                    dp[i][j] = 0 + dp[i - 1][j - 1]
+                else:
+                    dp[i][j] = 1 + min(
+                        dp[i - 1][j],
+                        min(dp[i][j - 1], dp[i - 1][j - 1]),
+                    )
+
+        return dp[m][n]
+
+
+class SolutionOptimalSpace1d:
+    def editDistance(self, start, target):
+        m = len(start)
+        n = len(target)
+
+        prev, curr = [0] * (n + 1), [0] * (n + 1)
+
+        for j in range(n + 1):
+            prev[j] = j
+
+        for i in range(1, m + 1):
+            curr = [0] * (n + 1)
+            curr[0] = i
+            for j in range(1, n + 1):
+                if start[i - 1] == target[j - 1]:
+                    curr[j] = 0 + prev[j - 1]
+                else:
+                    curr[j] = 1 + min(
+                        prev[j],
+                        min(curr[j - 1], prev[j - 1]),
+                    )
+
+            prev = curr
+
+        return prev[n]
+
+
+s = SolutionOptimalSpace1d()
 
 k1 = s.editDistance("planet", "plan")
 
