@@ -58,39 +58,51 @@ class Solution(object):
         if head is None:
             return None
 
-        headNode = None
-        prev = None
         simple_hash = {}
 
-        while head:
-            temp_node = Node(head.val)
-            if headNode is None:
-                headNode = temp_node
-            simple_hash[head] = temp_node
+        curr = head
+        while curr:
+            simple_hash[curr] = Node(curr.val)
+            curr = curr.next
 
-            random_node = None
+        curr = head
+        while curr:
+            simple_hash[curr].next = simple_hash.get(curr.next)
+            simple_hash[curr].random = simple_hash.get(curr.random)
 
-            if head.random and head.random in simple_hash:
-                random_node = simple_hash[head.random]
-            else:
-                if head.random is not None:
-                    random_node = Node(head.random.val)
-                    simple_hash[head.random] = random_node
+            curr = curr.next
 
-            temp_node.random = random_node
+        return simple_hash[head]
 
-            if prev is not None:
-                prev.next = temp_node
-                prev = prev.next
-            else:
-                prev = temp_node
+    def copyRandomListWrite(self, head):
+        # base case
+        if head is None:
+            return None
 
-            head = head.next
+        curr = head
+        while curr:
+            new_node = Node(curr.val)
+            new_node.next = curr.next
+            curr.next = new_node
+            curr = curr.next.next
 
-            temp_node = headNode
-            while temp_node:
-                print("node: ", temp_node.val)
-                if temp_node.random:
-                    print("random node: ", temp_node.random.val)
+        curr = head
 
-        return headNode
+        while curr:
+            if curr.random:
+                curr.next.random = curr.random.next
+
+            curr = curr.next.next
+
+        ans = head.next
+        curr = head
+        new_curr = head.next
+        while curr:
+            curr.next = new_curr.next
+            curr = curr.next
+
+            if curr:
+                new_curr.next = curr.next
+                new_curr = new_curr.next
+
+        return ans
