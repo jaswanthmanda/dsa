@@ -1,0 +1,2 @@
+# Arithemetic Progress Queries
+
