@@ -33,9 +33,14 @@ Constraints:
 - strs[i] consists of lowercase English letters.
 """
 
+from typing import List
+
 
 class Solution:
-    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+    def groupAnagrams(
+        self,
+        strs: List[str],
+    ) -> List[List[str]]:
         final_map = {}
 
         for item in strs:

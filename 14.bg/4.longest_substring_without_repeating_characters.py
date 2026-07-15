@@ -32,6 +32,22 @@ class Solution:
         n = len(s)
 
         if n in [0, 1]:
-            return 0
+            return n
 
-        
+        k = set()
+
+        l = 0
+        k.add(s[0])
+        r = 1
+        ans = float("-inf")
+        while l < n and r < n:
+            if s[r] in k:
+                k.remove(s[l])
+                l += 1
+            else:
+                k.add(s[r])
+                r += 1
+
+            ans = max(ans, r - l + 1)
+
+        return ans
